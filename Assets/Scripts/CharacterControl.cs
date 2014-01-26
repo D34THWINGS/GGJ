@@ -47,7 +47,7 @@ public class CharacterControl : MonoBehaviour {
 	}
 
 	void Update () {		
-		if (Input.GetKeyDown(KeyCode.Space)) {
+		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) {
 			if (IsGrounded || (!IsGrounded && _doubleJump)) {
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, JumpSpeed);
 
