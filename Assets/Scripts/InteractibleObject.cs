@@ -44,13 +44,12 @@ public class InteractibleObject : MonoBehaviour {
 	
 	public void Interact (GameObject player) {
 		if(isTransformable){
-
 			var resh = player.GetComponent<Reshape>();
 			if(Interaction == InteractionType.INSTANT){
-				
+				_reshape.CurrentShape = resh.CurrentShape;
+				collider2D.sharedMaterial = Glass;
 			}
 			if(Interaction == InteractionType.PERMANENT){
-				Debug.Log("test");
 				_reshape.CurrentShape = resh.CurrentShape;
 				collider2D.sharedMaterial = Glass;
 			}
@@ -70,6 +69,10 @@ public class InteractibleObject : MonoBehaviour {
 	public void Unteract(GameObject player){
 		if(isTransformable){
 			if(Interaction == InteractionType.INSTANT){
+				_reshape.CurrentShape = _reshape.OriginShape;
+				collider2D.sharedMaterial = Glass;
+			}
+			if(Interaction == InteractionType.TIMED){
 				
 			}
 		}

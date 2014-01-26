@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Reshape : MonoBehaviour {
+	public int OriginShape = 0;
 	public int CurrentShape {
 		get {
 			return _currentShape;
@@ -39,6 +40,7 @@ public class Reshape : MonoBehaviour {
 	private Animator animator;
 	
 	void Start () {
+		CurrentShape = OriginShape;
 		animator = GetComponent<Animator>();
 	}
 
