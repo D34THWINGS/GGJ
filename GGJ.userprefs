@@ -1,16 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TranformInterface.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SelectChestTreasure.cs">
     <Files>
-      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="33" Column="49" />
+      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="107" Column="54" />
       <File FileName="Assets\Scripts\Reshape.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Levels\ScriptLvl5.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CombinaisonController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CharacterControl.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharacterControl.cs" Line="77" Column="53" />
       <File FileName="Assets\Scripts\TranformInterface.cs" Line="68" Column="1" />
-      <File FileName="Assets\Scripts\HeavyInterrupt.cs" Line="31" Column="1" />
+      <File FileName="Assets\Scripts\HeavyInterrupt.cs" Line="26" Column="36" />
       <File FileName="Assets\Scripts\InteractionManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Levels\ScriptLvl6.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ChangeLevel.cs" Line="7" Column="54" />
+      <File FileName="Assets\Scripts\SelectChestTreasure.cs" Line="21" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
