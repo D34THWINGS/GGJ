@@ -32,6 +32,17 @@ public class CharacterControl : MonoBehaviour {
 			_doubleJump = true;
 		}
 
+		var axis = new Vector2(move.x, 0);
+		axis.Normalize();
+		RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.5f), axis, 0.6f, GroundLayers);
+		if (hit.fraction != 0.0f) {
+			move.x = 0.0f;
+		}
+		hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 0.5f), axis, 0.6f, GroundLayers);
+		if (hit.fraction != 0.0f) {
+			move.x = 0.0f;
+		}
+
 		rigidbody2D.velocity = move;
 	}
 
@@ -39,7 +50,6 @@ public class CharacterControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			if (IsGrounded || (!IsGrounded && _doubleJump)) {
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, JumpSpeed);
-				//rigidbody2D.AddForce(new Vector2(0, 900f));
 
 				if (!IsGrounded) {
 					_doubleJump = false;
