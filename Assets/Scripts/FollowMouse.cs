@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class FollowMouse : MonoBehaviour {
+	public GameObject Player;
 
 	// Use this for initialization
 	void Start () {
@@ -10,6 +11,7 @@ public class FollowMouse : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		transform.position = Player.transform.position;
 		if(Input.GetAxis("Joy X") != 0 || Input.GetAxis("Joy Y") != 0) {
 			print ("Using Controller");
 		}else {
@@ -19,7 +21,7 @@ public class FollowMouse : MonoBehaviour {
 			mouse_pos.x = mouse_pos.x - object_pos.x;
 			mouse_pos.y = mouse_pos.y - object_pos.y;
 			float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.Euler(new Vector3(angle, -90f, 0f));
+			transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
 		}
 	}
 }
