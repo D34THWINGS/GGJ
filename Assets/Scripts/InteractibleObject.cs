@@ -12,6 +12,7 @@ public class InteractibleObject : MonoBehaviour {
 	public bool isTransformable;
 	public bool isInvisible;
 	public bool isKillable;
+	public bool MassController;
 
 	public PhysicsMaterial2D Glass;
 	
@@ -35,6 +36,10 @@ public class InteractibleObject : MonoBehaviour {
 		if(isKillable){
 			
 		}
+		if(MassController){
+			gameObject.AddComponent("Rigidbody2D");
+			//gameObject.rigidbody2D.
+		}
 	}
 	
 	// Update is called once per frame
@@ -48,6 +53,15 @@ public class InteractibleObject : MonoBehaviour {
 			if(Interaction == InteractionType.INSTANT){
 				_reshape.CurrentShape = resh.CurrentShape;
 				collider2D.sharedMaterial = Glass;
+
+				if(MassController){
+					var playerControler = player.GetComponent<CharacterControl>();
+					if(playerControler.JumpSpeed>=18){
+						gameObject.rigidbody2D.mass = 2;
+					}else{
+						gameObject.rigidbody2D.mass = 10;
+					}
+				}
 			}
 			if(Interaction == InteractionType.PERMANENT){
 				_reshape.CurrentShape = resh.CurrentShape;
