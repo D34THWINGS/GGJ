@@ -46,8 +46,8 @@ public class CharacterControl : MonoBehaviour {
 				}
 			}
 		}
-
-		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -CameraDistance);
+		Camera.main.orthographicSize = CameraDistance;
+		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
 	}
 
 	void OnCollisionEnter2D (Collision2D theCollision){
