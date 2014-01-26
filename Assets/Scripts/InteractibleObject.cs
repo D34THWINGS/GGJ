@@ -14,6 +14,7 @@ public class InteractibleObject : MonoBehaviour {
 	public bool isInvisible;
 	public bool isKillable;
 	public bool MassController;
+	public bool isHeavy;
 
 	public PhysicsMaterial2D Glass;
 	
@@ -41,6 +42,10 @@ public class InteractibleObject : MonoBehaviour {
 		}
 		if(MassController){
 			gameObject.AddComponent("Rigidbody2D");
+			if(isHeavy)
+				gameObject.rigidbody2D.mass = 1000;
+			else
+				gameObject.rigidbody2D.mass = 200;
 			//gameObject.rigidbody2D.
 		}
 		_timerElapsed = false;
@@ -99,9 +104,9 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			var playerControler = player.GetComponent<CharacterControl>();
 			if(playerControler.JumpSpeed>=18){
-				gameObject.rigidbody2D.mass = 2;
+				gameObject.rigidbody2D.mass = 200;
 			}else{
-				gameObject.rigidbody2D.mass = 10;
+				gameObject.rigidbody2D.mass = 1000;
 			}
 		}
 	}
@@ -124,5 +129,11 @@ public class InteractibleObject : MonoBehaviour {
 	private void DoDetransform () {
 		_reshape.CurrentShape = _reshape.OriginShape;
 		collider2D.sharedMaterial = Glass;
+		if(MassController){
+			if(isHeavy)
+				gameObject.rigidbody2D.mass = 1000;
+			else
+				gameObject.rigidbody2D.mass = 200;
+		}
 	}
 }
