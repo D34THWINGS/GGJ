@@ -30,7 +30,7 @@ public class CharacterControl : MonoBehaviour {
 			_doubleJump = true;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
+		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) {
 			if (IsGrounded || (!IsGrounded && _doubleJump)) {
 				move.y = JumpSpeed;
 
