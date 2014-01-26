@@ -10,31 +10,36 @@ public class Reshape : MonoBehaviour {
 			if (value == _currentShape) return;
 
 			if (value == 0) {
-				// Square
+				if (_currentShape == 1) {
+					Destroy(GetComponent<CircleCollider2D>());
+				} else if (_currentShape == 2) {
+
+				}
+				var box = gameObject.AddComponent<BoxCollider2D>();
+				//box.size = new Vector2(1.0f, 1.0f);
 			} else if (value == 1) {
-			// Circle
+				if (_currentShape == 0) {
+					Destroy(GetComponent<BoxCollider2D>());
+				} else if (_currentShape == 2) {
+					
+				}
+				var box = gameObject.AddComponent<CircleCollider2D>();
+				//box.size = new Vector2(1.0f, 1.0f);
 			} else {
 				return;
 			}
 
+			PreviousShape = _currentShape;
 			_currentShape = value;
 		}
 	}
-	public int PreviousShape {
-		get {
-			return _previousShape;
-		}
-		set {
-			_previousShape = value;
-		}
-	}
+	public int PreviousShape { get; private set;}
 
-	private int _currentShape;
-	private int _previousShape;
+	private int _currentShape = 0;
 	private Animator animator;
 	
 	void Start () {
-		animator = GetComponent<Animator>();	
+		animator = GetComponent<Animator>();
 	}
 
 	void Update () {		

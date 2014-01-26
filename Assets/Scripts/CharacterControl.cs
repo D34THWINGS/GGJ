@@ -46,17 +46,6 @@ public class CharacterControl : MonoBehaviour {
 
 		rigidbody2D.velocity = move;
 
-		if (Input.GetKeyDown(KeyCode.Q) && Reshaper.CurrentShape != 1) {
-			Reshaper.PreviousShape = Reshaper.CurrentShape;
-			Reshaper.CurrentShape = 1;
-			print ("To Circle !");
-		}
-		if (Input.GetKeyDown(KeyCode.E) && Reshaper.CurrentShape != 0) {
-			Reshaper.PreviousShape = Reshaper.CurrentShape;
-			Reshaper.CurrentShape = 0;
-			print ("To Square !");
-		}
-
 		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -CameraDistance);
 	}
 
@@ -67,12 +56,10 @@ public class CharacterControl : MonoBehaviour {
 				GroundedOn = theCollision.gameObject;
 			}
 			if (contact.normal.x <= -1.0f) {
-				print(contact.normal.x);
 				CollidesRight = true;
 				_collider = theCollision.gameObject;
 			}
 			if (contact.normal.x >= 1.0f) {
-				print(contact.normal.x);
 				CollidesLeft = true;
 				_collider = theCollision.gameObject;
 			}
