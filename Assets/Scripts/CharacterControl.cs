@@ -45,8 +45,8 @@ public class CharacterControl : MonoBehaviour {
 		}
 
 		rigidbody2D.velocity = move;
-
-		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -CameraDistance);
+		Camera.main.orthographicSize = CameraDistance;
+		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
 	}
 
 	void OnCollisionEnter2D (Collision2D theCollision){
