@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2d10c8431461161409795d8b58778cf4
+guid: a4e3d9e93b6124d42b200e6fcd379ed3
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -8,6 +8,7 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cone001
+    6400000: //RootNode
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -29,7 +30,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: .00999999978
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
