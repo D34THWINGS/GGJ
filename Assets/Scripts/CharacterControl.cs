@@ -75,9 +75,6 @@ public class CharacterControl : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D (Collision2D theCollision){
-		if(theCollision.gameObject.name == "EndDoor"){
-			theCollision.gameObject.GetComponent<ChangeLevel>().ChangeScene();
-		}
 
 		if (theCollision.gameObject.tag == "Deadly" && !IsDead) {
 			IsDead = true;
