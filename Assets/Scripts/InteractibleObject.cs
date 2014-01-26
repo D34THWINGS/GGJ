@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Timers;
 
 public class InteractibleObject : MonoBehaviour {
 	public enum InteractionType {
@@ -17,6 +18,8 @@ public class InteractibleObject : MonoBehaviour {
 	public PhysicsMaterial2D Glass;
 	
 	private Reshape _reshape;
+	private bool _timerElapsed;
+	private Timer _timer;
 	
 	// Use this for initialization
 	void Start () {
@@ -28,13 +31,6 @@ public class InteractibleObject : MonoBehaviour {
 			if(_reshape == null){
 				Debug.LogError("No Reshape Component");
 			}
-			if(MassController){
-				gameObject.AddComponent("Rigidbody2D");
-				if(_reshape.isHeavy)
-					gameObject.rigidbody2D.mass = 1000;
-				else
-					gameObject.rigidbody2D.mass = 200;
-			}
 		}
 		if(isInvisible){
 			GetComponent<Animator>().SetBool("Hidden", true);
@@ -43,23 +39,27 @@ public class InteractibleObject : MonoBehaviour {
 		if(isKillable){
 			
 		}
+		if(MassController){
+			gameObject.AddComponent("Rigidbody2D");
+			//gameObject.rigidbody2D.
+		}
+		_timerElapsed = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (Interaction == InteractionType.TIMED && _timerElapsed) {
+			DoDetransform();
+			_timerElapsed = false;
+		}
 	}
 	
 	public void Interact (GameObject player) {
 		if(isTransformable){
-			var resh = player.GetComponent<Reshape>();
-			if(Interaction == InteractionType.INSTANT){
-				_reshape.CurrentShape = resh.CurrentShape;
-				collider2D.sharedMaterial = Glass;
-			}
+			DoTransform(player);
+
 			if(Interaction == InteractionType.PERMANENT){
-				_reshape.CurrentShape = resh.CurrentShape;
-				collider2D.sharedMaterial = Glass;
+				// Rescaling is working only for permanent change
 				if(gameObject.transform.localScale != player.transform.localScale){
 					gameObject.transform.localScale = player.transform.localScale;
 					Vector3 temp = gameObject.transform.localPosition;
@@ -69,15 +69,16 @@ public class InteractibleObject : MonoBehaviour {
 				}
 			}
 			if(Interaction == InteractionType.TIMED){
-				
-			}
-			if(MassController){
-				var playerControler = player.GetComponent<CharacterControl>();
-				if(playerControler.JumpSpeed>=18){
-					gameObject.rigidbody2D.mass = 200;
-				}else{
-					gameObject.rigidbody2D.mass = 1000;
+				if (_timer != null) {
+					_timer.Stop ();
 				}
+				_timer = new System.Timers.Timer(Timer);
+				_timer.Elapsed += (sender, args) => {
+					_timerElapsed = true;
+					_timer.Stop();
+				};
+				_timer.AutoReset = false;
+				_timer.Start();
 			}
 		}
 		if(isInvisible){
@@ -88,21 +89,26 @@ public class InteractibleObject : MonoBehaviour {
 			
 		}
 	}
+
+	private void DoTransform (GameObject player) {
+		var resh = player.GetComponent<Reshape>();
+		_reshape.CurrentShape = resh.CurrentShape;
+		collider2D.sharedMaterial = Glass;
+
+		if(MassController){
+			var playerControler = player.GetComponent<CharacterControl>();
+			if(playerControler.JumpSpeed>=18){
+				gameObject.rigidbody2D.mass = 2;
+			}else{
+				gameObject.rigidbody2D.mass = 10;
+			}
+		}
+	}
 	
 	public void Unteract(GameObject player){
 		if(isTransformable){
 			if(Interaction == InteractionType.INSTANT){
-				_reshape.CurrentShape = _reshape.OriginShape;
-				collider2D.sharedMaterial = Glass;
-				if(MassController){
-					if(_reshape.isHeavy)
-						gameObject.rigidbody2D.mass = 1000;
-					else
-						gameObject.rigidbody2D.mass = 200;
-				}
-			}
-			if(Interaction == InteractionType.TIMED){
-				
+				DoDetransform();
 			}
 		}
 		if(isInvisible){
@@ -112,5 +118,10 @@ public class InteractibleObject : MonoBehaviour {
 		if(isKillable){
 			
 		}
+	}
+
+	private void DoDetransform () {
+		_reshape.CurrentShape = _reshape.OriginShape;
+		collider2D.sharedMaterial = Glass;
 	}
 }
