@@ -21,7 +21,6 @@ public class InteractionManager : MonoBehaviour {
 	
 	void OnTriggerExit2D(Collider2D collision){
 		InteractibleObject IO =  collision.GetComponent<InteractibleObject>();
-		Debug.Log(collision);
 		if(IO != null){
 			IO.Unteract(_player);
 		}

@@ -28,6 +28,13 @@ public class InteractibleObject : MonoBehaviour {
 			if(_reshape == null){
 				Debug.LogError("No Reshape Component");
 			}
+			if(MassController){
+				gameObject.AddComponent("Rigidbody2D");
+				if(_reshape.isHeavy)
+					gameObject.rigidbody2D.mass = 1000;
+				else
+					gameObject.rigidbody2D.mass = 200;
+			}
 		}
 		if(isInvisible){
 			GetComponent<Animator>().SetBool("Hidden", true);
@@ -35,10 +42,6 @@ public class InteractibleObject : MonoBehaviour {
 		}
 		if(isKillable){
 			
-		}
-		if(MassController){
-			gameObject.AddComponent("Rigidbody2D");
-			//gameObject.rigidbody2D.
 		}
 	}
 	
@@ -53,15 +56,6 @@ public class InteractibleObject : MonoBehaviour {
 			if(Interaction == InteractionType.INSTANT){
 				_reshape.CurrentShape = resh.CurrentShape;
 				collider2D.sharedMaterial = Glass;
-
-				if(MassController){
-					var playerControler = player.GetComponent<CharacterControl>();
-					if(playerControler.JumpSpeed>=18){
-						gameObject.rigidbody2D.mass = 2;
-					}else{
-						gameObject.rigidbody2D.mass = 10;
-					}
-				}
 			}
 			if(Interaction == InteractionType.PERMANENT){
 				_reshape.CurrentShape = resh.CurrentShape;
@@ -77,6 +71,14 @@ public class InteractibleObject : MonoBehaviour {
 			if(Interaction == InteractionType.TIMED){
 				
 			}
+			if(MassController){
+				var playerControler = player.GetComponent<CharacterControl>();
+				if(playerControler.JumpSpeed>=18){
+					gameObject.rigidbody2D.mass = 200;
+				}else{
+					gameObject.rigidbody2D.mass = 1000;
+				}
+			}
 		}
 		if(isInvisible){
 			GetComponent<Animator>().SetBool("Hidden", false);
@@ -90,9 +92,14 @@ public class InteractibleObject : MonoBehaviour {
 	public void Unteract(GameObject player){
 		if(isTransformable){
 			if(Interaction == InteractionType.INSTANT){
-				Debug.Log("test");
 				_reshape.CurrentShape = _reshape.OriginShape;
 				collider2D.sharedMaterial = Glass;
+				if(MassController){
+					if(_reshape.isHeavy)
+						gameObject.rigidbody2D.mass = 1000;
+					else
+						gameObject.rigidbody2D.mass = 200;
+				}
 			}
 			if(Interaction == InteractionType.TIMED){
 				
