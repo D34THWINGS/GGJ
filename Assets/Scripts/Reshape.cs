@@ -11,6 +11,8 @@ public class Reshape : MonoBehaviour {
 		set {
 			if (value == _currentShape) return;
 
+			var glass = collider2D.sharedMaterial;
+			print (glass);
 			if (value == 0) {
 				if (_currentShape == 1) {
 					Destroy(GetComponent<CircleCollider2D>());
@@ -18,6 +20,7 @@ public class Reshape : MonoBehaviour {
 
 				}
 				var box = gameObject.AddComponent<BoxCollider2D>();
+				box.sharedMaterial = glass;
 				//box.size = new Vector2(1.0f, 1.0f);
 			} else if (value == 1) {
 				if (_currentShape == 0) {
@@ -26,11 +29,11 @@ public class Reshape : MonoBehaviour {
 					
 				}
 				var box = gameObject.AddComponent<CircleCollider2D>();
+				box.sharedMaterial = glass;
 				//box.size = new Vector2(1.0f, 1.0f);
 			} else {
 				return;
 			}
-
 			PreviousShape = _currentShape;
 			_currentShape = value;
 		}
