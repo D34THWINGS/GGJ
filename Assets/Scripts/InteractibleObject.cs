@@ -57,7 +57,6 @@ public class InteractibleObject : MonoBehaviour {
 	public void Interact (GameObject player) {
 		if(isTransformable){
 			DoTransform(player);
-
 			if(Interaction == InteractionType.PERMANENT){
 				// Rescaling is working only for permanent change
 				if(gameObject.transform.localScale != player.transform.localScale){
@@ -82,8 +81,10 @@ public class InteractibleObject : MonoBehaviour {
 			}
 		}
 		if(isInvisible){
-			GetComponent<Animator>().SetBool("Hidden", false);
-			gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+			if(PermanentVar.CanInvisible){
+				GetComponent<Animator>().SetBool("Hidden", false);
+				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+			}
 		}
 		if(isKillable){
 			
