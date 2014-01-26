@@ -51,15 +51,15 @@ public class CharacterControl : MonoBehaviour {
 
 	void OnCollisionEnter2D (Collision2D theCollision){
 		foreach(ContactPoint2D contact in theCollision.contacts) {
-			if(contact.normal.y >= 1.0f) {
+			if(contact.normal.y >= 0.5f) {
 				IsGrounded = true;
 				GroundedOn = theCollision.gameObject;
 			}
-			if (contact.normal.x <= -1.0f) {
+			if (contact.normal.x <= -0.5f) {
 				CollidesRight = true;
 				_collider = theCollision.gameObject;
 			}
-			if (contact.normal.x >= 1.0f) {
+			if (contact.normal.x >= 0.5f) {
 				CollidesLeft = true;
 				_collider = theCollision.gameObject;
 			}
