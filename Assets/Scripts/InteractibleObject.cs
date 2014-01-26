@@ -52,6 +52,13 @@ public class InteractibleObject : MonoBehaviour {
 			if(Interaction == InteractionType.PERMANENT){
 				_reshape.CurrentShape = resh.CurrentShape;
 				collider2D.sharedMaterial = Glass;
+				if(gameObject.transform.localScale != player.transform.localScale){
+					gameObject.transform.localScale = player.transform.localScale;
+					Vector3 temp = gameObject.transform.localPosition;
+					//temp.x = gameObject.transform.localPosition.x - ((_reshape.OriginSize.x/2f)-(player.transform.localScale.x/2f));
+					temp.y = gameObject.transform.localPosition.y - ((_reshape.OriginSize.y/2f)-(player.transform.localScale.y/2f));
+					gameObject.transform.localPosition = temp;
+				}
 			}
 			if(Interaction == InteractionType.TIMED){
 				
@@ -69,6 +76,7 @@ public class InteractibleObject : MonoBehaviour {
 	public void Unteract(GameObject player){
 		if(isTransformable){
 			if(Interaction == InteractionType.INSTANT){
+				Debug.Log("test");
 				_reshape.CurrentShape = _reshape.OriginShape;
 				collider2D.sharedMaterial = Glass;
 			}

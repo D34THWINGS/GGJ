@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Reshape : MonoBehaviour {
 	public int OriginShape = 0;
+	public Vector3 OriginSize;
 	public int CurrentShape {
 		get {
 			return _currentShape;
@@ -41,6 +42,7 @@ public class Reshape : MonoBehaviour {
 	
 	void Start () {
 		CurrentShape = OriginShape;
+		OriginSize = transform.localScale;
 		animator = GetComponent<Animator>();
 	}
 
