@@ -30,7 +30,7 @@ public class CharacterControl : MonoBehaviour {
 			_doubleJump = true;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) {
+		if (Input.GetKeyDown(KeyCode.Space)) {
 			if (IsGrounded || (!IsGrounded && _doubleJump)) {
 				move.y = JumpSpeed;
 
@@ -45,28 +45,24 @@ public class CharacterControl : MonoBehaviour {
 		}
 
 		rigidbody2D.velocity = move;
-		Camera.main.orthographicSize = CameraDistance;
-		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+
+		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -CameraDistance);
 	}
 
 	void OnCollisionEnter2D (Collision2D theCollision){
 		foreach(ContactPoint2D contact in theCollision.contacts) {
-			if(contact.normal.y >= 0.5f) {
+			if(contact.normal.y >= 1.0f) {
 				IsGrounded = true;
 				GroundedOn = theCollision.gameObject;
 			}
-			if (contact.normal.x <= -0.5f) {
+			if (contact.normal.x <= -1.0f) {
 				CollidesRight = true;
 				_collider = theCollision.gameObject;
 			}
-			if (contact.normal.x >= 0.5f) {
+			if (contact.normal.x >= 1.0f) {
 				CollidesLeft = true;
 				_collider = theCollision.gameObject;
 			}
-		}
-
-		if(theCollision.gameObject.name == "EndDoor"){
-			theCollision.gameObject.GetComponent<ChangeLevel>().ChangeScene();
 		}
 	}
 	
