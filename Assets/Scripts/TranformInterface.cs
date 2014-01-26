@@ -31,10 +31,18 @@ public class TranformInterface : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.JoystickButton4)) {
-			_activatedBtn = ButtonType.SHAPE;
+			if (_activatedBtn == ButtonType.SHAPE) {
+				_activatedBtn = ButtonType.NOKEY;
+			} else {
+				_activatedBtn = ButtonType.SHAPE;
+			}
 		}
 		if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton5)) {
-			_activatedBtn = ButtonType.WEIGHT;
+			if (_activatedBtn == ButtonType.WEIGHT) {
+				_activatedBtn = ButtonType.NOKEY;
+			} else {
+				_activatedBtn = ButtonType.WEIGHT;
+			}
 		}
 
 		if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.JoystickButton2)) {
@@ -81,8 +89,8 @@ public class TranformInterface : MonoBehaviour {
 			GUI.DrawTexture(new Rect(Screen.width / 2 - 150, Screen.height - 130, 50, 50), BtnCircle);
 			GUI.DrawTexture(new Rect(Screen.width / 2 - 80, Screen.height - 110, 50, 50), BtnTriangle);
 		} else if (_activatedBtn == ButtonType.WEIGHT) {
-			GUI.DrawTexture(new Rect(Screen.width / 2 + 200, Screen.height - 120, 50, 50), BtnSquare);
-			GUI.DrawTexture(new Rect(Screen.width / 2 + 100, Screen.height - 120, 50, 50), BtnTriangle);
+			GUI.DrawTexture(new Rect(Screen.width / 2 + 100, Screen.height - 120, 50, 50), BtnLight);
+			GUI.DrawTexture(new Rect(Screen.width / 2 + 200, Screen.height - 120, 50, 50), BtnHeavy);
 		}
 	}
 }

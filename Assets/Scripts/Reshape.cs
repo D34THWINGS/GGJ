@@ -4,7 +4,7 @@ using System.Collections;
 public class Reshape : MonoBehaviour {
 	public int OriginShape = 0;
 	public Vector3 OriginSize;
-	public bool isHeavy;
+
 	public int CurrentShape {
 		get {
 			return _currentShape;

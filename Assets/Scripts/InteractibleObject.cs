@@ -17,6 +17,11 @@ public class InteractibleObject : MonoBehaviour {
 	public bool isHeavy;
 
 	public PhysicsMaterial2D Glass;
+
+	public delegate void DelegateInteraction(GameObject sender);
+	public event DelegateInteraction OnTransformChange;
+	public event DelegateInteraction OnWeightChange;
+	public event DelegateInteraction OnDisplayChange;
 	
 	private Reshape _reshape;
 	private bool _timerElapsed;
@@ -26,7 +31,6 @@ public class InteractibleObject : MonoBehaviour {
 	void Start () {
 		GetComponent<Animator>().SetBool("Hidden", false);
 		gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-		Debug.Log(isTransformable);
 		if(isTransformable){
 			_reshape = gameObject.GetComponent<Reshape>();
 			if(_reshape == null){
@@ -43,10 +47,9 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			gameObject.AddComponent("Rigidbody2D");
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = 1000;
+				gameObject.rigidbody2D.mass = 100;
 			else
-				gameObject.rigidbody2D.mass = 200;
-			//gameObject.rigidbody2D.
+				gameObject.rigidbody2D.mass = 20;
 		}
 		_timerElapsed = false;
 	}
@@ -84,11 +87,17 @@ public class InteractibleObject : MonoBehaviour {
 				_timer.AutoReset = false;
 				_timer.Start();
 			}
+			if (OnTransformChange != null) {
+				OnTransformChange(gameObject);
+			}
 		}
 		if(isInvisible){
 			if(PermanentVar.CanInvisible){
 				GetComponent<Animator>().SetBool("Hidden", false);
 				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+				if (OnDisplayChange != null) {
+					OnDisplayChange(gameObject);
+				}
 			}
 		}
 		if(isKillable){
@@ -104,9 +113,12 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			var playerControler = player.GetComponent<CharacterControl>();
 			if(playerControler.JumpSpeed>=18){
-				gameObject.rigidbody2D.mass = 200;
+				gameObject.rigidbody2D.mass = 20;
 			}else{
-				gameObject.rigidbody2D.mass = 1000;
+				gameObject.rigidbody2D.mass = 100;
+			}
+			if (OnWeightChange != null) {
+				OnWeightChange(gameObject);
 			}
 		}
 	}
@@ -131,9 +143,9 @@ public class InteractibleObject : MonoBehaviour {
 		collider2D.sharedMaterial = Glass;
 		if(MassController){
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = 1000;
+				gameObject.rigidbody2D.mass = 100;
 			else
-				gameObject.rigidbody2D.mass = 200;
+				gameObject.rigidbody2D.mass = 20;
 		}
 	}
 }
