@@ -24,6 +24,8 @@ public class InteractibleObject : MonoBehaviour {
 	public event DelegateInteraction OnWeightChange;
 	public event DelegateInteraction OnDisplayChange;
 	
+	public bool IsDead { get; private set; }
+
 	private Reshape _reshape;
 	private bool _timerElapsed;
 	private Timer _timer;
@@ -102,7 +104,10 @@ public class InteractibleObject : MonoBehaviour {
 			}
 		}
 		if(isKillable){
-			
+			var dead = player.GetComponent<CharacterControl>().IsDead;
+			IsDead = dead;
+			GetComponent<Animator>().SetBool("IsDead", dead);
+			collider2D.isTrigger = dead;
 		}
 	}
 
@@ -139,7 +144,7 @@ public class InteractibleObject : MonoBehaviour {
 			gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 		}
 		if(isKillable){
-			
+
 		}
 	}
 

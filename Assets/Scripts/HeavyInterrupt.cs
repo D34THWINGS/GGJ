@@ -8,10 +8,6 @@ public class HeavyInterrupt : MonoBehaviour {
 	public bool IsPressed { get; private set; }
 
 	public GameObject HeavyObject;
-	public GameObject OpenGameObject;
-	public float Timer = 0;
-
-	private float time = 0;
 
 	// Use this for initialization
 	void Start () {
