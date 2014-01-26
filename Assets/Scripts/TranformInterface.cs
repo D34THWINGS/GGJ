@@ -10,6 +10,8 @@ public class TranformInterface : MonoBehaviour {
 	public Texture BtnLight;
 	public Texture BtnHeavy;
 
+	public GameObject WeightMessage;
+
 	private enum ButtonType { NOKEY, SHAPE, WEIGHT };
 	private ButtonType _activatedBtn = ButtonType.NOKEY;
 	private GameObject _player;
@@ -43,6 +45,8 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_player.GetComponent<CharacterControl>().JumpSpeed = 18;
 				_activatedBtn = ButtonType.NOKEY;
+				WeightMessage.GetComponent<TextMesh>().text = "Soft";
+				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.JoystickButton3)) {
@@ -53,6 +57,8 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_player.GetComponent<CharacterControl>().JumpSpeed = 12;
 				_activatedBtn = ButtonType.NOKEY;
+				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
+				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
