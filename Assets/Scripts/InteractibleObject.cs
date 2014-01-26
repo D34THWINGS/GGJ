@@ -15,6 +15,7 @@ public class InteractibleObject : MonoBehaviour {
 	public bool isKillable;
 	public bool MassController;
 	public bool isHeavy;
+	public GameObject WeightMessage;
 
 	public PhysicsMaterial2D Glass;
 
@@ -47,9 +48,9 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			gameObject.AddComponent("Rigidbody2D");
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = 100;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
 			else
-				gameObject.rigidbody2D.mass = 20;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
 		}
 		_timerElapsed = false;
 	}
@@ -113,9 +114,13 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			var playerControler = player.GetComponent<CharacterControl>();
 			if(playerControler.JumpSpeed>=18){
-				gameObject.rigidbody2D.mass = 20;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
+				WeightMessage.GetComponent<TextMesh>().text = "Soft";
+				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}else{
-				gameObject.rigidbody2D.mass = 100;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
+				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
+				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}
 			if (OnWeightChange != null) {
 				OnWeightChange(gameObject);
@@ -143,9 +148,9 @@ public class InteractibleObject : MonoBehaviour {
 		collider2D.sharedMaterial = Glass;
 		if(MassController){
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = 100;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
 			else
-				gameObject.rigidbody2D.mass = 20;
+				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
 		}
 	}
 }

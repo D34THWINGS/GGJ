@@ -16,7 +16,7 @@ public class HeavyInterrupt : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		HeavyObject.GetComponent<InteractibleObject>().OnWeightChange += (sender) => {
-			if (sender.rigidbody2D.mass >= 100) {
+			if (sender.rigidbody2D.mass >= PermanentVar.WeightHeavy) {
 				IsPressed = true;
 			} else { 
 				IsPressed = false;

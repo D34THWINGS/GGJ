@@ -15,6 +15,7 @@ public class TranformInterface : MonoBehaviour {
 	private enum ButtonType { NOKEY, SHAPE, WEIGHT };
 	private ButtonType _activatedBtn = ButtonType.NOKEY;
 	private GameObject _player;
+	private AudioSource[] audios;
 
 	// Use this for initialization
 	void Start () {
@@ -26,6 +27,7 @@ public class TranformInterface : MonoBehaviour {
 		if (player != null) {
 			_player = player;
 		}
+		audios = gameObject.GetComponents<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -34,14 +36,16 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_activatedBtn = ButtonType.NOKEY;
 			} else {
-				_activatedBtn = ButtonType.SHAPE;
+				if(PermanentVar.CanTransformRond)
+					_activatedBtn = ButtonType.SHAPE;
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton5)) {
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_activatedBtn = ButtonType.NOKEY;
 			} else {
-				_activatedBtn = ButtonType.WEIGHT;
+				if(PermanentVar.CanHeavy)
+					_activatedBtn = ButtonType.WEIGHT;
 			}
 		}
 
@@ -49,30 +53,36 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_player.GetComponent<Reshape>().CurrentShape = 0;
 				_activatedBtn = ButtonType.NOKEY;
+				audios[0].Play();
+
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_player.GetComponent<CharacterControl>().JumpSpeed = 18;
 				_activatedBtn = ButtonType.NOKEY;
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
 				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
+				audios[1].Play();
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.JoystickButton3)) {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_player.GetComponent<Reshape>().CurrentShape = 1;
 				_activatedBtn = ButtonType.NOKEY;
+				audios[0].Play();
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_player.GetComponent<CharacterControl>().JumpSpeed = 12;
 				_activatedBtn = ButtonType.NOKEY;
 				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
 				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
+				audios[2].Play();
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_player.GetComponent<Reshape>().CurrentShape = 2;
 				_activatedBtn = ButtonType.NOKEY;
+				audios[0].Play();
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				

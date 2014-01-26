@@ -16,6 +16,8 @@ public class SelectChestTreasure : MonoBehaviour {
 			}else if(canInvisible){
 				PermanentVar.CanInvisible = true;
 			}
+			AudioSource[] audios = colision.gameObject.GetComponents<AudioSource>();
+			audios[2].Play();
 		}
 		Destroy(gameObject);
 	}

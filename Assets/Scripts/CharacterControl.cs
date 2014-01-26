@@ -16,10 +16,12 @@ public class CharacterControl : MonoBehaviour {
 
 	private bool _doubleJump = true;
 	private GameObject _collider;
+	private AudioSource[] audios;
 
 	void Start () {
 		Reshaper = GetComponent<Reshape>();
 		IsGrounded = false;
+		audios = gameObject.GetComponents<AudioSource>();
 	}
 
 	void FixedUpdate () {
@@ -50,8 +52,9 @@ public class CharacterControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) {
 			if (IsGrounded || (!IsGrounded && _doubleJump)) {
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, JumpSpeed);
-
+				audios[0].Play();
 				if (!IsGrounded) {
+					audios[1].Play();
 					_doubleJump = false;
 				}
 			}
