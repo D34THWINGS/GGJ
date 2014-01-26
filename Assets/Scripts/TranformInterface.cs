@@ -41,7 +41,8 @@ public class TranformInterface : MonoBehaviour {
 				_activatedBtn = ButtonType.NOKEY;
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
-
+				_player.GetComponent<CharacterControl>().JumpSpeed = 18;
+				_activatedBtn = ButtonType.NOKEY;
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.JoystickButton3)) {
@@ -50,7 +51,8 @@ public class TranformInterface : MonoBehaviour {
 				_activatedBtn = ButtonType.NOKEY;
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
-				
+				_player.GetComponent<CharacterControl>().JumpSpeed = 12;
+				_activatedBtn = ButtonType.NOKEY;
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
