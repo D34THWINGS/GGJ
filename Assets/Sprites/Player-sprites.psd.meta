@@ -135,14 +135,5 @@ TextureImporter:
         height: 50
       alignment: 0
       pivot: {x: 0, y: 0}
-    - name: Player-sprites_10
-      rect:
-        serializedVersion: 2
-        x: 200
-        y: 0
-        width: 50
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
   spritePackingTag: 
   userData: 
