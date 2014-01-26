@@ -64,6 +64,10 @@ public class CharacterControl : MonoBehaviour {
 				_collider = theCollision.gameObject;
 			}
 		}
+
+		if(theCollision.gameObject.name == "EndDoor"){
+			theCollision.gameObject.GetComponent<ChangeLevel>().ChangeScene();
+		}
 	}
 	
 	void OnCollisionExit2D(Collision2D theCollision){

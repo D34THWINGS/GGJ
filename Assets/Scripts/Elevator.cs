@@ -7,11 +7,6 @@ public class Elevator : MonoBehaviour {
 	public float LimitUp = 10f;
 
 	private bool _goesUp = true;
-
-	// Use this for initialization
-	void Start () {
-
-	}
 	
 	// Update is called once per frame
 	void Update () {
