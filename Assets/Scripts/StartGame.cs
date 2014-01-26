@@ -10,8 +10,15 @@ public class StartGame : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.anyKeyDown){
+
+	}
+
+	void OnMouseUp () {
+		if(gameObject.name == "Start")
 			Application.LoadLevel(1);
-		}
+		else if(gameObject.name == "Demo")
+			Application.LoadLevel(7);
+		else
+			print ("Credits");
 	}
 }
