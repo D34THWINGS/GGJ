@@ -1,9 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CharacterControl.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\FollowMouse.cs">
     <Files>
-      <File FileName="Assets\Scripts\CharacterControl.cs" Line="41" Column="5" />
-      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="74" Column="17" />
+      <File FileName="Assets\Scripts\Reshape.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\InteractionManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharacterControl.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\StartGame.cs" Line="14" Column="25" />
+      <File FileName="Assets\Scripts\FollowMouse.cs" Line="19" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
