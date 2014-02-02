@@ -10,7 +10,7 @@ public class ScriptLvl6 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		PressurePlate.GetComponent<HeavyInterrupt>().OnPressureSwitch += (value) => {
+		PressurePlate.GetComponent<PressurePlate>().OnToggle += (value) => {
 			_openDoor = value;
 		};
 	}

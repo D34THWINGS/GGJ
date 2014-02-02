@@ -3,6 +3,9 @@ using System.Collections;
 using System.Timers;
 
 public class InteractibleObject : MonoBehaviour {
+	[HideInInspector]
+	public bool MassController;
+
 	public enum InteractionType {
 		PERMANENT,
 		TIMED,
@@ -13,11 +16,9 @@ public class InteractibleObject : MonoBehaviour {
 	public bool isTransformable;
 	public bool isInvisible;
 	public bool isKillable;
-	public bool MassController;
 	public bool isHeavy;
 	public GameObject WeightMessage;
-
-	public PhysicsMaterial2D Glass;
+	public float RescaleSpeed = 5f;
 
 	public delegate void DelegateInteraction(GameObject sender);
 	public event DelegateInteraction OnTransformChange;
@@ -29,11 +30,14 @@ public class InteractibleObject : MonoBehaviour {
 	private Reshape _reshape;
 	private bool _timerElapsed;
 	private Timer _timer;
+	private Vector2 targetScale;
 	
 	// Use this for initialization
 	void Start () {
 		GetComponent<Animator>().SetBool("Hidden", false);
 		gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+		targetScale = transform.localScale;
+
 		if(isTransformable){
 			_reshape = gameObject.GetComponent<Reshape>();
 			if(_reshape == null){
@@ -63,21 +67,14 @@ public class InteractibleObject : MonoBehaviour {
 			DoDetransform();
 			_timerElapsed = false;
 		}
+
+		if (transform.localScale != (Vector3) targetScale)
+			transform.localScale = Vector2.Lerp(transform.localScale, targetScale, Time.deltaTime * RescaleSpeed);
 	}
 	
 	public void Interact (GameObject player) {
 		if(isTransformable){
 			DoTransform(player);
-			if(Interaction == InteractionType.PERMANENT){
-				// Rescaling is working only for permanent change
-				if(gameObject.transform.localScale != player.transform.localScale){
-					gameObject.transform.localScale = player.transform.localScale;
-					Vector3 temp = gameObject.transform.localPosition;
-					//temp.x = gameObject.transform.localPosition.x - ((_reshape.OriginSize.x/2f)-(player.transform.localScale.x/2f));
-					temp.y = gameObject.transform.localPosition.y - ((_reshape.OriginSize.y/2f)-(player.transform.localScale.y/2f));
-					gameObject.transform.localPosition = temp;
-				}
-			}
 			if(Interaction == InteractionType.TIMED){
 				if (_timer != null) {
 					_timer.Stop ();
@@ -112,13 +109,14 @@ public class InteractibleObject : MonoBehaviour {
 	}
 
 	private void DoTransform (GameObject player) {
-		var resh = player.GetComponent<Reshape>();
-		_reshape.CurrentShape = resh.CurrentShape;
-		collider2D.sharedMaterial = Glass;
+		var playerControler = player.GetComponent<CharacterControl>();
+		_reshape.CurrentShape = playerControler.Reshaper.CurrentShape;
 
+		// Rescaling
+		targetScale = player.transform.localScale;
+				
 		if(MassController){
-			var playerControler = player.GetComponent<CharacterControl>();
-			if(playerControler.JumpSpeed>=18){
+			if(playerControler.JumpForce>=18){
 				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
 				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
@@ -150,7 +148,6 @@ public class InteractibleObject : MonoBehaviour {
 
 	private void DoDetransform () {
 		_reshape.CurrentShape = _reshape.OriginShape;
-		collider2D.sharedMaterial = Glass;
 		if(MassController){
 			if(isHeavy)
 				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;

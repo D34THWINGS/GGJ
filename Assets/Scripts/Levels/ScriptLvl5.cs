@@ -19,9 +19,11 @@ public class ScriptLvl5 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Combinaison.GetComponent<CombinaisonController>().OnCombinaisonFull += () => {
-			_openDoor = true;
-			_timer.Stop();
+		Combinaison.GetComponent<CombinaisonController>().OnTrigger += (eventName) => {
+			if (eventName == TriggeringMechanism.EventNames.ENABLE) {				
+				_openDoor = true;
+				_timer.Stop();
+			}
 		};
 
 		_timer = new Timer(PopInterval);

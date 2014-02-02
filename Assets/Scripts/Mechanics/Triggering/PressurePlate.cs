@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HeavyInterrupt : MonoBehaviour {
+public class PressurePlate : MonoBehaviour {
 
-	public delegate void DelegateHeavy(bool value);
-	public event DelegateHeavy OnPressureSwitch;
+	public delegate void DelegatePressure(bool value);
+	public event DelegatePressure OnToggle;
 	public bool IsPressed { get; private set; }
 
 	public GameObject HeavyObject;
@@ -17,14 +17,9 @@ public class HeavyInterrupt : MonoBehaviour {
 			} else { 
 				IsPressed = false;
 			}
-			if (OnPressureSwitch != null) {
-				OnPressureSwitch(IsPressed);
+			if (OnToggle != null) {
+				OnToggle(IsPressed);
 			}
 		};
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }
