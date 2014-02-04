@@ -62,8 +62,8 @@ public class CharacterControl : MonoBehaviour {
 		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
 		IsGrounded = Physics2D.Linecast(transform.position, GroundTransform.position, GroundLayers);
 		IsGrounded = Physics2D.OverlapArea(
-			new Vector2(GroundTransform.position.x - 0.49f, GroundTransform.position.y - 0.1f), 
-			new Vector2(GroundTransform.position.x + 0.49f, GroundTransform.position.y + 0.1f),
+			new Vector2(GroundTransform.position.x - 0.48f, GroundTransform.position.y - 0.1f), 
+			new Vector2(GroundTransform.position.x + 0.48f, GroundTransform.position.y + 0.1f),
 			GroundLayers
 			);
 

@@ -4,13 +4,23 @@ using System.Collections.Generic;
 public abstract class TriggerListener : MonoBehaviour {
 	
 	public List<TriggeringMechanism> Mechanics;
+	public bool RevertedTrigger = false;
 	
 	protected virtual void Start() {
-		print (Mechanics);
 		foreach (var mech in Mechanics) {
-			print(mech);
-			mech.OnTrigger += TriggerAction;
+			mech.OnTrigger += Trigger;
 		}
+	}
+
+	private void Trigger (TriggeringMechanism.EventNames eventName) {
+		var inverter = eventName;
+		if (RevertedTrigger && eventName == TriggeringMechanism.EventNames.ENABLE){
+			inverter = TriggeringMechanism.EventNames.DISABLE;
+		}
+		if (RevertedTrigger && eventName == TriggeringMechanism.EventNames.DISABLE) {
+			inverter = TriggeringMechanism.EventNames.ENABLE;
+		}
+		TriggerAction(inverter);
 	}
 
 	protected abstract void TriggerAction (TriggeringMechanism.EventNames eventName);

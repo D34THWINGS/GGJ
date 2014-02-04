@@ -13,7 +13,6 @@ public class InteractionManager : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter2D(Collider2D collision){
-		print("triggered by : " + collision.gameObject.name);
 		if (collision.gameObject.name == "Player") return;
 		InteractibleObject IO =  collision.GetComponent<InteractibleObject>();
 		if(IO != null){
