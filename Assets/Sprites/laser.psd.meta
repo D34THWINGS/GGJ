@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9b4d2b534efa3704dbdedbebd8db2839
+guid: c4d7165f3abbbcf449937a0219d6bb08
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -23,7 +23,7 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 1024
   textureSettings:
-    filterMode: 1
+    filterMode: -1
     aniso: 1
     mipBias: -1
     wrapMode: 1
@@ -45,31 +45,22 @@ TextureImporter:
     compressionQuality: 50
   spriteSheet:
     sprites:
-    - name: pressure_plate_0
+    - name: laser_0
       rect:
         serializedVersion: 2
-        x: 216
-        y: 392
-        width: 550
-        height: 90
-      alignment: 0
-      pivot: {x: 0, y: 0}
-    - name: pressure_plate_1
-      rect:
-        serializedVersion: 2
-        x: 243
-        y: 246
-        width: 514
-        height: 91
-      alignment: 0
-      pivot: {x: 0, y: 0}
-    - name: pressure_plate_2
-      rect:
-        serializedVersion: 2
-        x: 5
+        x: 0
         y: 0
-        width: 990
-        height: 120
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: laser_1
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 0
+        width: 250
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
   spritePackingTag: 

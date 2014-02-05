@@ -7,13 +7,13 @@ public class Button : TriggeringMechanism {
 	public EventNames OnReleaseEvent = EventNames.DISABLE;
 
 	void OnCollisionEnter2D(Collision2D theCollision) {
-		if(theCollision.gameObject.name == "Body") {
+		if(theCollision.gameObject.name == "ButtonTrigger") {
 			Trigger(OnPressEvent);
 		}
 	}
 	
 	void OnCollisionExit2D(Collision2D theCollision) {
-		if(theCollision.gameObject.name == "Body") {
+		if(theCollision.gameObject.name == "ButtonTrigger") {
 			Trigger(OnReleaseEvent);
 		}
 	}

@@ -54,7 +54,6 @@ public class CombinaisonController : TriggeringMechanism {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		print (collider.gameObject.name);
 		if (!Enabled) return;
 
 		var resh = collider.gameObject.GetComponent<Reshape>();

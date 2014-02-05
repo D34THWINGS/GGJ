@@ -5,6 +5,9 @@ public class Propeller : TriggerListener {
 
 	public bool Enabled = true;
 	public float Speed = 1.0f;
+	public bool UseLimits = false;
+	public float LowerAngle = 0f;
+	public float UpperAngle = 0f;
 
 	// Use this for initialization
 	protected override void Start () {
@@ -14,6 +17,8 @@ public class Propeller : TriggerListener {
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (Enabled) {
+			var angle = transform.rotation.eulerAngles.z + Speed;
+			if (Speed > 0 && angle > UpperAngle || Speed < 0 && angle < UpperAngle) return;
 			transform.Rotate(0f,0f, Speed);
 		}
 	}
