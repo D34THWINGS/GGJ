@@ -36,7 +36,7 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_activatedBtn = ButtonType.NOKEY;
 			} else {
-				if(PermanentVar.CanTransformRond)
+				if(StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE))
 					_activatedBtn = ButtonType.SHAPE;
 			}
 		}
@@ -44,7 +44,7 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				_activatedBtn = ButtonType.NOKEY;
 			} else {
-				if(PermanentVar.CanHeavy)
+				if(StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT))
 					_activatedBtn = ButtonType.WEIGHT;
 			}
 		}

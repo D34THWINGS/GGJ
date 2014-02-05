@@ -12,7 +12,7 @@ public class PressurePlate : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		HeavyObject.GetComponent<InteractibleObject>().OnWeightChange += (sender) => {
-			if (sender.rigidbody2D.mass >= PermanentVar.WeightHeavy) {
+			if (sender.rigidbody2D.mass >= StaticVariables.WeightHeavy) {
 				IsPressed = true;
 			} else { 
 				IsPressed = false;

@@ -54,9 +54,9 @@ public class InteractibleObject : MonoBehaviour {
 		if(MassController){
 			gameObject.AddComponent("Rigidbody2D");
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
 			else
-				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
 		}
 		_timerElapsed = false;
 	}
@@ -92,7 +92,7 @@ public class InteractibleObject : MonoBehaviour {
 			}
 		}
 		if(isInvisible){
-			if(PermanentVar.CanInvisible){
+			if(StaticVariables.HasPower(StaticVariables.Powers.REVEAL)){
 				GetComponent<Animator>().SetBool("Hidden", false);
 				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 				if (OnDisplayChange != null) {
@@ -117,11 +117,11 @@ public class InteractibleObject : MonoBehaviour {
 				
 		if(MassController){
 			if(playerControler.JumpForce>=18){
-				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
 				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}else{
-				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
 				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
 				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}
@@ -150,9 +150,9 @@ public class InteractibleObject : MonoBehaviour {
 		_reshape.CurrentShape = _reshape.OriginShape;
 		if(MassController){
 			if(isHeavy)
-				gameObject.rigidbody2D.mass = PermanentVar.WeightHeavy;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
 			else
-				gameObject.rigidbody2D.mass = PermanentVar.WeightSoft;
+				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
 		}
 	}
 }
