@@ -9,7 +9,11 @@ public static class StaticVariables {
 		CHANGE_WEIGHT
 	}
 
-	private static List<Powers> EnabledPowers = new List<Powers>();
+	private static List<Powers> EnabledPowers = new List<Powers>(){
+		Powers.CHANGE_WEIGHT,
+		Powers.RESHAPE_CIRCLE,
+		Powers.REVEAL
+	};
 
 	public static int WeightSoft = 20;
 	public static int WeightHeavy = 100;
