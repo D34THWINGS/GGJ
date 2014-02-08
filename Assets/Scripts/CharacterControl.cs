@@ -35,7 +35,15 @@ public class CharacterControl : MonoBehaviour {
 	void FixedUpdate () {
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
-		
+		var test = true;
+		if(Mathf.Sign(h) != Mathf.Sign(rigidbody2D.velocity.x) && h != 0) {
+			rigidbody2D.velocity = new Vector2(0f, rigidbody2D.velocity.y);
+		}
+
+		var move = new Vector2(h * MaxSpeed, rigidbody2D.velocity.y);
+		//rigidbody2D.velocity = move;
+
+
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 		if(h * rigidbody2D.velocity.x < MaxSpeed)
 			// ... add a force to the player.
@@ -48,7 +56,7 @@ public class CharacterControl : MonoBehaviour {
 		
 		// If the player should jump...
 		if(Jump)
-		{			
+		{
 			// Add a vertical force to the player.
 			rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0f);
 			rigidbody2D.AddForce(new Vector2(0f, JumpForce));
