@@ -1,21 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\StaticVariables.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\InteractionManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Mechanics\TriggerListener.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\Receptacle.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\InteractionManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\Button.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\BeamSensor.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggered\BeamGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggered\Door.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\TriggeringMechanism.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ParticleLayer.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SelectChestTreasure.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\StaticVariables.cs" Line="15" Column="16" />
-      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\PressurePlate.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\TranformInterface.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="89" Column="18" />
+      <File FileName="Assets\Scripts\TranformInterface.cs" Line="60" Column="59" />
+      <File FileName="Assets\Scripts\StaticVariables.cs" Line="19" Column="38" />
+      <File FileName="Assets\Scripts\CharacterControl.cs" Line="64" Column="105" />
+      <File FileName="Assets\Scripts\InteractionManager.cs" Line="13" Column="3" />
+      <File FileName="Assets\Scripts\Mechanics\Triggering\PressurePlate.cs" Line="15" Column="76" />
+      <File FileName="Assets\Scripts\Mechanics\Triggering\CombinaisonController.cs" Line="32" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

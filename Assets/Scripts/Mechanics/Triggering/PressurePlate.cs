@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PressurePlate : MonoBehaviour {
@@ -11,8 +11,9 @@ public class PressurePlate : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		HeavyObject.GetComponent<InteractibleObject>().OnWeightChange += (sender) => {
-			if (sender.rigidbody2D.mass >= StaticVariables.WeightHeavy) {
+		HeavyObject.GetComponent<InteractibleObject>().OnStateChange += (iEvent, sender) => {
+			if (iEvent != InteractibleObject.InteractionEvent.WEIGHT_CHANGE) return;
+			if (sender.rigidbody2D.mass >= StaticVariables.HeavyWeight) {
 				IsPressed = true;
 			} else { 
 				IsPressed = false;

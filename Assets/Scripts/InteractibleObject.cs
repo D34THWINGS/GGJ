@@ -3,156 +3,157 @@ using System.Collections;
 using System.Timers;
 
 public class InteractibleObject : MonoBehaviour {
-	[HideInInspector]
-	public bool MassController;
-
 	public enum InteractionType {
 		PERMANENT,
 		TIMED,
 		INSTANT
-	}
+	};
+	public enum InteractionEvent {
+		RESHAPE,
+		HIDE,
+		SHOW,
+		KILL,
+		RESURECT,
+		RESCALE,
+		WEIGHT_CHANGE
+	};
+
 	public InteractionType Interaction;
 	public float Timer;
-	public bool isTransformable;
-	public bool isInvisible;
-	public bool isKillable;
-	public bool isHeavy;
+	public bool IsReshapable;
+	public bool IsInvisible;
+	public bool IsKillable;
+	public bool IsWeightChangeable;
+	public bool IsHeavy = false;
 	public GameObject WeightMessage;
 	public float RescaleSpeed = 5f;
 
-	public delegate void DelegateInteraction(GameObject sender);
-	public event DelegateInteraction OnTransformChange;
-	public event DelegateInteraction OnWeightChange;
-	public event DelegateInteraction OnDisplayChange;
-	
-	public bool IsDead { get; private set; }
+	public delegate void DelegateInteraction(InteractionEvent iEvent, GameObject sender);
+	public event DelegateInteraction OnStateChange;
 
-	private Reshape _reshape;
-	private bool _timerElapsed;
-	private Timer _timer;
+	[HideInInspector]
+	public bool IsDead { 
+		get {
+			return isDead;
+		}
+		set {
+			isDead = value;
+			GetComponent<Animator>().SetBool("IsDead", value);
+			collider2D.isTrigger = value;
+		}
+	}
+
+	private Reshape reshape;
+	private bool timerElapsed;
+	private Timer timer;
 	private Vector2 targetScale;
-	
+	private bool isDead;
+
 	// Use this for initialization
 	void Start () {
 		GetComponent<Animator>().SetBool("Hidden", false);
 		gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 		targetScale = transform.localScale;
 
-		if(isTransformable){
-			_reshape = gameObject.GetComponent<Reshape>();
-			if(_reshape == null){
+		if(IsReshapable){
+			reshape = gameObject.GetComponent<Reshape>();
+			if(reshape == null){
 				Debug.LogError("No Reshape Component");
 			}
 		}
-		if(isInvisible){
+		if(IsInvisible){
 			GetComponent<Animator>().SetBool("Hidden", true);
 			gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 		}
-		if(isKillable){
-			
+		if(IsWeightChangeable){
+			if (rigidbody2D == null)
+				gameObject.AddComponent("Rigidbody2D");
+			rigidbody2D.mass = IsHeavy ? StaticVariables.HeavyWeight : StaticVariables.LightWeight;
 		}
-		if(MassController){
-			gameObject.AddComponent("Rigidbody2D");
-			if(isHeavy)
-				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
-			else
-				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
-		}
-		_timerElapsed = false;
+		timerElapsed = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Interaction == InteractionType.TIMED && _timerElapsed) {
-			DoDetransform();
-			_timerElapsed = false;
+		if (Interaction == InteractionType.TIMED && timerElapsed) {
+			Unteract();
+			timerElapsed = false;
 		}
 
-		if (transform.localScale != (Vector3) targetScale)
+		if (transform.localScale != (Vector3) targetScale) {
 			transform.localScale = Vector2.Lerp(transform.localScale, targetScale, Time.deltaTime * RescaleSpeed);
+		}
 	}
 	
 	public void Interact (GameObject player) {
-		if(isTransformable){
-			DoTransform(player);
+		if(IsReshapable){
+			var playerControler = player.GetComponent<CharacterControl>();
+			reshape.CurrentShape = playerControler.Reshaper.CurrentShape;
+
 			if(Interaction == InteractionType.TIMED){
-				if (_timer != null) {
-					_timer.Stop ();
+				if (timer != null) {
+					timer.Stop ();
 				}
-				_timer = new System.Timers.Timer(Timer);
-				_timer.Elapsed += (sender, args) => {
-					_timerElapsed = true;
-					_timer.Stop();
+				timer = new System.Timers.Timer(Timer);
+				timer.Elapsed += (sender, args) => {
+					timerElapsed = true;
+					timer.Stop();
 				};
-				_timer.AutoReset = false;
-				_timer.Start();
+				timer.AutoReset = false;
+				timer.Start();
 			}
-			if (OnTransformChange != null) {
-				OnTransformChange(gameObject);
-			}
-		}
-		if(isInvisible){
-			if(StaticVariables.HasPower(StaticVariables.Powers.REVEAL)){
-				GetComponent<Animator>().SetBool("Hidden", false);
-				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-				if (OnDisplayChange != null) {
-					OnDisplayChange(gameObject);
-				}
+			if (OnStateChange != null) {
+				OnStateChange(InteractionEvent.RESHAPE, gameObject);
 			}
 		}
-		if(isKillable){
-			var dead = player.GetComponent<CharacterControl>().IsDead;
-			IsDead = dead;
-			GetComponent<Animator>().SetBool("IsDead", dead);
-			collider2D.isTrigger = dead;
+		if(IsInvisible && StaticVariables.HasPower(StaticVariables.Powers.REVEAL)){
+			GetComponent<Animator>().SetBool("Hidden", false);
+			gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+			if (OnStateChange != null) {
+				OnStateChange(InteractionEvent.SHOW, gameObject);
+			}
 		}
-	}
-
-	private void DoTransform (GameObject player) {
-		var playerControler = player.GetComponent<CharacterControl>();
-		_reshape.CurrentShape = playerControler.Reshaper.CurrentShape;
-
-		// Rescaling
-		targetScale = player.transform.localScale;
-				
-		if(MassController){
-			if(playerControler.JumpForce>=18){
-				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
+		if(IsKillable){
+			IsDead = player.GetComponent<CharacterControl>().IsDead;
+			if (OnStateChange != null) {
+				if (IsDead)
+					OnStateChange(InteractionEvent.KILL, gameObject);
+				else
+					OnStateChange(InteractionEvent.RESURECT, gameObject);
+			}
+		}
+		if(IsWeightChangeable && StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT)){
+			if (gameObject.rigidbody2D.mass == player.rigidbody2D.mass) return;
+			gameObject.rigidbody2D.mass = player.rigidbody2D.mass;
+			if(player.rigidbody2D.mass == StaticVariables.LightWeight){
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
-				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}else{
-				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
 				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
-				Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
 			}
-			if (OnWeightChange != null) {
-				OnWeightChange(gameObject);
+			Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);			
+			if (OnStateChange != null) {
+				OnStateChange(InteractionEvent.WEIGHT_CHANGE, gameObject);
 			}
 		}
 	}
 	
-	public void Unteract(GameObject player){
-		if(isTransformable){
-			if(Interaction == InteractionType.INSTANT){
-				DoDetransform();
-			}
+	public void Unteract(){
+		if (Interaction != InteractionType.INSTANT) return;
+		if(IsReshapable){
+			reshape.CurrentShape = reshape.OriginShape;
 		}
-		if(isInvisible){
+		if(IsInvisible){
 			GetComponent<Animator>().SetBool("Hidden", true);
 			gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 		}
-		if(isKillable){
-
+		if(IsKillable){
+			IsDead = false;
 		}
-	}
-
-	private void DoDetransform () {
-		_reshape.CurrentShape = _reshape.OriginShape;
-		if(MassController){
-			if(isHeavy)
-				gameObject.rigidbody2D.mass = StaticVariables.WeightHeavy;
+		if(IsWeightChangeable){
+			if(IsWeightChangeable)
+				gameObject.rigidbody2D.mass = StaticVariables.HeavyWeight;
 			else
-				gameObject.rigidbody2D.mass = StaticVariables.WeightSoft;
+				gameObject.rigidbody2D.mass = StaticVariables.LightWeight;
 		}
 	}
 }

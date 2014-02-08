@@ -25,24 +25,18 @@ public class CharacterControl : MonoBehaviour {
 
 	private bool doubleJump = true;
 	private Timer respawnTimer;
-	private AudioSource[] audios;
 
 	void Start () {
 		Reshaper = GetComponent<Reshape>();
-		audios = gameObject.GetComponents<AudioSource>();
 	}
 
 	void FixedUpdate () {
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
-		var test = true;
+
 		if(Mathf.Sign(h) != Mathf.Sign(rigidbody2D.velocity.x) && h != 0) {
 			rigidbody2D.velocity = new Vector2(0f, rigidbody2D.velocity.y);
 		}
-
-		var move = new Vector2(h * MaxSpeed, rigidbody2D.velocity.y);
-		//rigidbody2D.velocity = move;
-
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 		if(h * rigidbody2D.velocity.x < MaxSpeed)
@@ -68,7 +62,6 @@ public class CharacterControl : MonoBehaviour {
 
 	void Update () {
 		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
-		IsGrounded = Physics2D.Linecast(transform.position, GroundTransform.position, GroundLayers);
 		IsGrounded = Physics2D.OverlapArea(
 			new Vector2(GroundTransform.position.x - 0.48f, GroundTransform.position.y - 0.1f), 
 			new Vector2(GroundTransform.position.x + 0.48f, GroundTransform.position.y + 0.1f),

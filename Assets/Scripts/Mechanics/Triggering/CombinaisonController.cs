@@ -24,7 +24,6 @@ public class CombinaisonController : TriggeringMechanism {
 	private int nbOfValid = 0;
 	private Timer timer;
 	private bool pop = false;
-	private bool enabled = true;
 
 	void Start() {
 		if (Spawn == null)

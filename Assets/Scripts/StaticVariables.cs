@@ -15,8 +15,8 @@ public static class StaticVariables {
 		Powers.REVEAL
 	};
 
-	public static int WeightSoft = 20;
-	public static int WeightHeavy = 100;
+	public static float LightWeight = 1.2f;
+	public static float HeavyWeight = 3f;
 
 	public static bool HasPower(Powers power) {
 		return EnabledPowers.Contains(power);

@@ -18,7 +18,7 @@ public class Propeller : TriggerListener {
 	void FixedUpdate () {
 		if (Enabled) {
 			var angle = transform.rotation.eulerAngles.z + Speed;
-			if (Speed > 0 && angle > UpperAngle || Speed < 0 && angle < UpperAngle) return;
+			if (UseLimits && (Speed > 0 && angle > UpperAngle || Speed < 0 && angle < UpperAngle)) return;
 			transform.Rotate(0f,0f, Speed);
 		}
 	}

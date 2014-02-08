@@ -57,7 +57,7 @@ public class TranformInterface : MonoBehaviour {
 
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
-				_player.GetComponent<CharacterControl>().JumpForce = 18;
+				_player.rigidbody2D.mass = StaticVariables.LightWeight;
 				_activatedBtn = ButtonType.NOKEY;
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
 				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
@@ -71,7 +71,7 @@ public class TranformInterface : MonoBehaviour {
 				audios[0].Play();
 			}
 			if (_activatedBtn == ButtonType.WEIGHT) {
-				_player.GetComponent<CharacterControl>().JumpForce = 12;
+				_player.rigidbody2D.mass = StaticVariables.HeavyWeight;
 				_activatedBtn = ButtonType.NOKEY;
 				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
 				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);

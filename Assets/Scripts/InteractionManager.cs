@@ -16,6 +16,7 @@ public class InteractionManager : MonoBehaviour {
 		if (collision.gameObject.name == "Player") return;
 		InteractibleObject IO =  collision.GetComponent<InteractibleObject>();
 		if(IO != null){
+			print ("Collides with :" + collision.gameObject.name);
 			IO.Interact(_player);
 		}
 	}
@@ -24,7 +25,7 @@ public class InteractionManager : MonoBehaviour {
 		if (collision.gameObject.name == "Player") return;
 		InteractibleObject IO =  collision.GetComponent<InteractibleObject>();
 		if(IO != null){
-			IO.Unteract(_player);
+			IO.Unteract();
 		}
 	}	
 }
