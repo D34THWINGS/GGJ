@@ -39,10 +39,13 @@ public class CharacterControl : MonoBehaviour {
 		}
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-		if(h * rigidbody2D.velocity.x < MaxSpeed)
-			// ... add a force to the player.
-			rigidbody2D.AddForce(Vector2.right * h * MoveForce);
-		
+		if(h * rigidbody2D.velocity.x < MaxSpeed){
+			if (IsGrounded)
+				rigidbody2D.AddForce(Vector2.right * h * MoveForce);
+			else 
+				rigidbody2D.AddForce(Vector2.right * h * (MoveForce / 10));
+		}
+
 		// If the player's horizontal velocity is greater than the maxSpeed...
 		if(Mathf.Abs(rigidbody2D.velocity.x) > MaxSpeed)
 			// ... set the player's velocity to the maxSpeed in the x axis.
