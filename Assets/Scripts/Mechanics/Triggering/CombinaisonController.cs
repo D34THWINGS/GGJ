@@ -59,7 +59,8 @@ public class CombinaisonController : TriggeringMechanism {
 		if (resh == null) return;
 		
 		if (nbOfValid == Combinaison.Count || resh.CurrentShape != Combinaison[nbOfValid]){ 
-			Destroy(collider.gameObject); 
+			Destroy(collider.gameObject);
+			particleSystem.Play();
 		} else {
 			nbOfValid++;
 			Destroy(collider.gameObject.GetComponent<InteractibleObject>());

@@ -9,6 +9,9 @@ public class CharacterControl : MonoBehaviour {
 	public bool IsDead = false;				// If player is dead or not
 	[HideInInspector]
 	public Reshape Reshaper;				// Public accessor/setter for reshping component
+
+	public delegate void DieDelegate ();
+	public event DieDelegate OnDie;
 	
 	public float MoveForce = 365f;			// Amount of force added to move the player left and right.
 	public float MaxSpeed = 5f;				// The fastest the player can travel in the x axis.
@@ -18,13 +21,12 @@ public class CharacterControl : MonoBehaviour {
 
 	// Grounding
 	[HideInInspector]
-	public bool IsGrounded = false;
-	public Transform GroundTransform;
-	public float GroundRadius = 0.3f;
-	public LayerMask GroundLayers;
+	public bool IsGrounded = false;			// Condition whether the player is on the ground
+	public Transform GroundTransform;		// Position of the ground detector
+	public float GroundRadius = 0.3f;		// Radius of the ground detector
+	public LayerMask GroundLayers;			// Layers which are considered as ground
 
 	private bool doubleJump = true;
-	private Timer respawnTimer;
 
 	void Start () {
 		Reshaper = GetComponent<Reshape>();
@@ -87,21 +89,34 @@ public class CharacterControl : MonoBehaviour {
 		Camera.main.GetComponent<MotionBlur>().enabled = IsDead;
 		Camera.main.GetComponent<GrayscaleEffect>().enabled = IsDead;
 
+		// Apply camera distance
 		Camera.main.orthographicSize = CameraDistance;
-		Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
 	}
 
 	void OnCollisionEnter2D (Collision2D theCollision){
 
 		if (theCollision.gameObject.tag == "Deadly" && !IsDead) {
+			// Kill player
 			IsDead = true;
-			respawnTimer = new Timer(RespawnTime);
-			respawnTimer.Elapsed += (sender, e) => {
-				IsDead = false;
-				respawnTimer.Stop();
-			};
-			respawnTimer.AutoReset = false;
-			respawnTimer.Start();
+
+			// Start the respawn timer
+			StartCoroutine(Respawn(RespawnTime));
+
+			// Cast die event
+			if (OnDie != null)
+				OnDie();
 		}
+	}
+
+	/// <summary>
+	/// Respawn the player at the specified waitTime.
+	/// </summary>
+	/// <param name="waitTime">Wait time.</param>
+	public IEnumerator Respawn(float waitTime) {		
+		// Wait for respawn time
+		yield return new WaitForSeconds(waitTime / 1000);
+		
+		// Respawn
+		IsDead = false;
 	}
 }

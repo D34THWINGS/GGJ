@@ -1,14 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\InteractionManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\InteractibleObject.cs" Line="89" Column="18" />
-      <File FileName="Assets\Scripts\TranformInterface.cs" Line="60" Column="59" />
-      <File FileName="Assets\Scripts\StaticVariables.cs" Line="19" Column="38" />
-      <File FileName="Assets\Scripts\CharacterControl.cs" Line="64" Column="105" />
-      <File FileName="Assets\Scripts\InteractionManager.cs" Line="13" Column="3" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\PressurePlate.cs" Line="15" Column="76" />
-      <File FileName="Assets\Scripts\Mechanics\Triggering\CombinaisonController.cs" Line="32" Column="28" />
+      <File FileName="Assets\Scripts\RespawnTimer.cs" Line="19" Column="30" />
+      <File FileName="..\..\Unity\Demo2D\Assets\Scripts\PlayerControl.cs" Line="125" Column="2" />
+      <File FileName="Assets\Scripts\CharacterControl.cs" Line="103" Column="38" />
+      <File FileName="Assets\Scripts\InteractionManager.cs" Line="17" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
