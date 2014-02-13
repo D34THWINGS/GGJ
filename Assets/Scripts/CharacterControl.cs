@@ -108,6 +108,10 @@ public class CharacterControl : MonoBehaviour {
 		}
 	}
 
+	void Teleport (Transform Point) {
+
+	}
+
 	/// <summary>
 	/// Respawn the player at the specified waitTime.
 	/// </summary>
