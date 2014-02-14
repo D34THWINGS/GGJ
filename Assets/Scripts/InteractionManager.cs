@@ -14,7 +14,6 @@ public class InteractionManager : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D collision){
 		if (collision.gameObject.name == "Player") return;
-		print ("trigger");
 		InteractibleObject IO =  collision.GetComponent<InteractibleObject>();
 		if(IO != null){
 			IO.Interact(_player);

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PressurePlate : MonoBehaviour {
+public class PressurePlate : TriggeringMechanism {
 
 	public delegate void DelegatePressure(bool value);
 	public event DelegatePressure OnToggle;
@@ -22,5 +22,9 @@ public class PressurePlate : MonoBehaviour {
 				OnToggle(IsPressed);
 			}
 		};
+	}
+
+	void OnCollisionStay2D (Collision2D collision) {
+		print (collision.rigidbody.velocity);
 	}
 }

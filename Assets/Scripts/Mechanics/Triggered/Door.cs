@@ -32,7 +32,6 @@ public class Door : TriggerListener {
 
 	protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
 	{
-		print("triggered");
 		switch(eventName) {
 		case TriggeringMechanism.EventNames.ENABLE:
 			IsOpened = true;

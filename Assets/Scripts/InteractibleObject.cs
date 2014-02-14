@@ -123,14 +123,26 @@ public class InteractibleObject : MonoBehaviour {
 			}
 		}
 		if(IsWeightChangeable && StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT)){
-			if (gameObject.rigidbody2D.mass == player.rigidbody2D.mass) return;
-			gameObject.rigidbody2D.mass = player.rigidbody2D.mass;
+			// Do nothing if the wieght hasn't change
+			if (rigidbody2D.mass == player.rigidbody2D.mass) return;
+
+			// Apply new weight
+			rigidbody2D.mass = player.rigidbody2D.mass;
+
+			// Is object is not mmoving apply a little force to recalculate physics
+			if (rigidbody2D.velocity == Vector2.zero) {
+				rigidbody2D.AddForce(new Vector2(0f, 0.1f));
+			}
+
+			// Display weight change text
 			if(player.rigidbody2D.mass == StaticVariables.LightWeight){
 				WeightMessage.GetComponent<TextMesh>().text = "Soft";
 			}else{
 				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
 			}
-			Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);			
+			Instantiate(WeightMessage, gameObject.transform.position, Quaternion.identity);
+
+			// Fire weight change event
 			if (OnStateChange != null) {
 				OnStateChange(InteractionEvent.WEIGHT_CHANGE, gameObject);
 			}
