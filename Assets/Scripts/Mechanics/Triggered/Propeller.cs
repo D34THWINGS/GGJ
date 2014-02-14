@@ -9,6 +9,8 @@ public class Propeller : TriggerListener {
 	public float LowerAngle = 0f;
 	public float UpperAngle = 0f;
 
+	public GameObject Blades;
+
 	// Use this for initialization
 	protected override void Start () {
 		base.Start();
@@ -17,7 +19,7 @@ public class Propeller : TriggerListener {
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (Enabled) {
-			var angle = transform.rotation.eulerAngles.z + Speed;
+			var angle = Blades.transform.rotation.eulerAngles.z + Speed;
 			if (UseLimits && (Speed > 0 && angle > UpperAngle || Speed < 0 && angle < UpperAngle)) return;
 			transform.Rotate(0f,0f, Speed);
 		}

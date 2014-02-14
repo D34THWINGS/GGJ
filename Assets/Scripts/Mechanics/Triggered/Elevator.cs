@@ -40,6 +40,7 @@ public class Elevator : TriggerListener {
 				break;
 			case TriggeringMechanism.EventNames.DISABLE:
 				Started = false;
+				rigidbody2D.velocity = Vector2.zero;
 				break;
 			default:
 				break;
