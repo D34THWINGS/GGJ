@@ -78,7 +78,7 @@ public class TranformInterface : MonoBehaviour {
 				audios[2].Play();
 			}
 		}
-		if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
+		/*if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
 			if (_activatedBtn == ButtonType.SHAPE) {
 				_player.GetComponent<Reshape>().CurrentShape = 2;
 				_activatedBtn = ButtonType.NOKEY;
@@ -87,17 +87,22 @@ public class TranformInterface : MonoBehaviour {
 			if (_activatedBtn == ButtonType.WEIGHT) {
 				
 			}
-		}
+		}*/
 	}
 	
 	void OnGUI () {
-		GUI.DrawTexture(new Rect(Screen.width / 2 - 150, Screen.height - 60, 50, 50), BtnShape);
-		GUI.DrawTexture(new Rect(Screen.width / 2 + 150, Screen.height - 60, 50, 50), BtnWeight);
+		if(StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE)){
+			GUI.DrawTexture(new Rect(Screen.width / 2 - 150, Screen.height - 60, 50, 50), BtnShape);
+		}
+
+		if(StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT)){
+			GUI.DrawTexture(new Rect(Screen.width / 2 + 150, Screen.height - 60, 50, 50), BtnWeight);
+		}
 
 		if (_activatedBtn == ButtonType.SHAPE) {
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 220, Screen.height - 110, 50, 50), BtnSquare);
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 150, Screen.height - 130, 50, 50), BtnCircle);
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 80, Screen.height - 110, 50, 50), BtnTriangle);
+			GUI.DrawTexture(new Rect(Screen.width / 2 - 200, Screen.height - 120, 50, 50), BtnSquare);//Screen.width / 2 - 220
+			GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height - 120, 50, 50), BtnCircle);//Screen.width / 2 - 150
+			//GUI.DrawTexture(new Rect(Screen.width / 2 - 80, Screen.height - 110, 50, 50), BtnTriangle);
 		} else if (_activatedBtn == ButtonType.WEIGHT) {
 			GUI.DrawTexture(new Rect(Screen.width / 2 + 100, Screen.height - 120, 50, 50), BtnLight);
 			GUI.DrawTexture(new Rect(Screen.width / 2 + 200, Screen.height - 120, 50, 50), BtnHeavy);
