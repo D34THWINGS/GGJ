@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
+using XRay;
 
 public class TranformInterface : MonoBehaviour {
 	public Texture BtnShape;
@@ -12,10 +13,9 @@ public class TranformInterface : MonoBehaviour {
 
 	public GameObject WeightMessage;
 
-	private enum ButtonType { NOKEY, SHAPE, WEIGHT };
-	private ButtonType _activatedBtn = ButtonType.NOKEY;
-	private GameObject _player;
 	private AudioSource[] audios;
+
+	private TransformButton btnTree;
 
 	// Use this for initialization
 	void Start () {
@@ -24,88 +24,69 @@ public class TranformInterface : MonoBehaviour {
 		}
 
 		var player = GameObject.Find("Player");
-		if (player != null) {
-			_player = player;
-		}
+
 		audios = gameObject.GetComponents<AudioSource>();
+
+		btnTree = new TransformButton {
+			ChildButtons = new Dictionary<string, TransformButton> {
+				{
+					"Shape", new TransformButton {
+						BtnTexture = BtnShape, JoystickButton = KeyCode.JoystickButton4,
+						ChildButtons = new Dictionary<string, TransformButton> {
+							{"Square", new TransformButton { BtnTexture = BtnSquare, JoystickButton = KeyCode.JoystickButton2 }},
+							{"Circle", new TransformButton { BtnTexture = BtnCircle, JoystickButton = KeyCode.JoystickButton3 }}
+						}
+					}
+				},{
+					"Weight", new TransformButton {
+						BtnTexture = BtnWeight, JoystickButton = KeyCode.JoystickButton5,
+						ChildButtons = new Dictionary<string, TransformButton> {
+							{"Light", new TransformButton { BtnTexture = BtnLight, JoystickButton = KeyCode.JoystickButton2 }},
+							{"Heavy", new TransformButton { BtnTexture = BtnHeavy, JoystickButton = KeyCode.JoystickButton3 }}
+						}
+					}
+				}
+			},
+			Spacing = 400f, Enable = true, Position = new Vector2(Screen.width / 2, Screen.height - 10)
+		};
+		btnTree.Init();
+		btnTree.OnPress += (Name) => {
+			switch (Name) {
+				case "Square":
+					player.GetComponent<Reshape>().CurrentShape = 0;
+					audios[0].Play();
+					break;
+				case "Circle":
+					player.GetComponent<Reshape>().CurrentShape = 1;
+					audios[0].Play();
+					break;
+				case "Light":
+					player.rigidbody2D.mass = StaticVariables.LightWeight;
+					WeightMessage.GetComponent<TextMesh>().text = "Soft";
+					Instantiate(WeightMessage, player.transform.position, Quaternion.identity);
+					audios[1].Play();
+					break;
+				case "Heavy":
+					player.rigidbody2D.mass = StaticVariables.HeavyWeight;
+					WeightMessage.GetComponent<TextMesh>().text = "Heavy";
+					Instantiate(WeightMessage, player.transform.position, Quaternion.identity);
+					audios[2].Play();
+					break;
+				default:
+					break;
+			}
+		};
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.JoystickButton4)) {
-			if (_activatedBtn == ButtonType.SHAPE) {
-				_activatedBtn = ButtonType.NOKEY;
-			} else {
-				if(StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE))
-					_activatedBtn = ButtonType.SHAPE;
-			}
-		}
-		if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton5)) {
-			if (_activatedBtn == ButtonType.WEIGHT) {
-				_activatedBtn = ButtonType.NOKEY;
-			} else {
-				if(StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT))
-					_activatedBtn = ButtonType.WEIGHT;
-			}
-		}
+		btnTree.Update();
 
-		if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.JoystickButton2)) {
-			if (_activatedBtn == ButtonType.SHAPE) {
-				_player.GetComponent<Reshape>().CurrentShape = 0;
-				_activatedBtn = ButtonType.NOKEY;
-				audios[0].Play();
-
-			}
-			if (_activatedBtn == ButtonType.WEIGHT) {
-				_player.rigidbody2D.mass = StaticVariables.LightWeight;
-				_activatedBtn = ButtonType.NOKEY;
-				WeightMessage.GetComponent<TextMesh>().text = "Soft";
-				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
-				audios[1].Play();
-			}
-		}
-		if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.JoystickButton3)) {
-			if (_activatedBtn == ButtonType.SHAPE) {
-				_player.GetComponent<Reshape>().CurrentShape = 1;
-				_activatedBtn = ButtonType.NOKEY;
-				audios[0].Play();
-			}
-			if (_activatedBtn == ButtonType.WEIGHT) {
-				_player.rigidbody2D.mass = StaticVariables.HeavyWeight;
-				_activatedBtn = ButtonType.NOKEY;
-				WeightMessage.GetComponent<TextMesh>().text = "Heavy";
-				Instantiate(WeightMessage, _player.transform.position, Quaternion.identity);
-				audios[2].Play();
-			}
-		}
-		/*if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
-			if (_activatedBtn == ButtonType.SHAPE) {
-				_player.GetComponent<Reshape>().CurrentShape = 2;
-				_activatedBtn = ButtonType.NOKEY;
-				audios[0].Play();
-			}
-			if (_activatedBtn == ButtonType.WEIGHT) {
-				
-			}
-		}*/
+		btnTree["Shape"].Active = StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE);
+		btnTree["Weight"].Active = StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT);
 	}
 	
 	void OnGUI () {
-		if(StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE)){
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 150, Screen.height - 60, 50, 50), BtnShape);
-		}
-
-		if(StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT)){
-			GUI.DrawTexture(new Rect(Screen.width / 2 + 150, Screen.height - 60, 50, 50), BtnWeight);
-		}
-
-		if (_activatedBtn == ButtonType.SHAPE) {
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 200, Screen.height - 120, 50, 50), BtnSquare);//Screen.width / 2 - 220
-			GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height - 120, 50, 50), BtnCircle);//Screen.width / 2 - 150
-			//GUI.DrawTexture(new Rect(Screen.width / 2 - 80, Screen.height - 110, 50, 50), BtnTriangle);
-		} else if (_activatedBtn == ButtonType.WEIGHT) {
-			GUI.DrawTexture(new Rect(Screen.width / 2 + 100, Screen.height - 120, 50, 50), BtnLight);
-			GUI.DrawTexture(new Rect(Screen.width / 2 + 200, Screen.height - 120, 50, 50), BtnHeavy);
-		}
+		btnTree.DrawButtonTree(btnTree.Position);
 	}
 }

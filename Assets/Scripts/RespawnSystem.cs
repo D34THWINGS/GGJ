@@ -16,7 +16,6 @@ public class RespawnSystem : MonoBehaviour {
 	
 	void OnTriggerEnter2D (Collider2D collider) {
 		if(collider.name == "Player") {
-			print ("FUCK");
 			collider.gameObject.transform.position = Spawn.position;
 			collider.rigidbody2D.velocity = Vector2.zero;
 		}
