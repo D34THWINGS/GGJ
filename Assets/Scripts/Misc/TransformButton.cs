@@ -12,6 +12,7 @@ namespace XRay
 		public bool Active = true;
 		public bool Enable = false;
 		public KeyCode JoystickButton;
+		public KeyCode KeyboardButton;
 		public Vector2 Position;
 
 		public float Spacing = 100f;
@@ -34,6 +35,7 @@ namespace XRay
 
 		public TransformButton (){
 			this.Position = new Vector2();
+			this.name = "";
 		}
 
 		public void Init() {
@@ -42,7 +44,7 @@ namespace XRay
 				btn.Value.Position = Position;
 				btn.Value.OnPress += (Name) => {
 					if (OnPress != null)
-						OnPress(Name);
+						OnPress((name != "" ? name + "." : "") + Name);
 				};
 				btn.Value.Init();
 			}
@@ -63,7 +65,7 @@ namespace XRay
 			var width = activeBtns.Sum(b => b.Value.BtnTexture.width) + Spacing * (activeBtns.Count() - 1);
 			foreach (var btn in activeBtns) {
 				if (Enable) {
-					btn.Value.Draw(new Vector2(position.x - width / 2 + (previous != null ? previous.BtnTexture.width : 0) + i * Spacing, position.y - VerticalOffset));
+					btn.Value.Draw(new Vector2(previous != null ? previous.Position.x + previous.BtnTexture.width + Spacing : position.x - width / 2, position.y - VerticalOffset));
 					i++;
 					previous = btn.Value;
 				} else {
@@ -95,7 +97,7 @@ namespace XRay
 
 		protected bool GetKeys() {
 			if (!Active) return false;
-			if (Input.GetKeyDown(JoystickButton)) {
+			if (Input.GetKeyDown(JoystickButton) || Input.GetKeyDown(KeyboardButton)) {
 				if (HasChild)
 					Enable = !Enable;
 				else

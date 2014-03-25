@@ -18,8 +18,8 @@ public class InteractibleObject : MonoBehaviour {
 		WEIGHT_CHANGE
 	};
 
-	public InteractionType Interaction;
-	public float Timer;
+	public InteractionType Type;
+	public float InteractionTimer;
 	public bool IsReshapable;
 	public bool IsInvisible;
 	public bool IsKillable;
@@ -48,12 +48,15 @@ public class InteractibleObject : MonoBehaviour {
 	private Timer timer;
 	private Vector2 targetScale;
 	private bool isDead;
+	private PhysicsMaterial2D originMaterial;
+	private Coroutine timedCoroutine;
 
 	// Use this for initialization
 	void Start () {
 		GetComponent<Animator>().SetBool("Hidden", false);
 		gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 		targetScale = transform.localScale;
+		originMaterial = collider2D.sharedMaterial;
 
 		if(IsReshapable){
 			reshape = gameObject.GetComponent<Reshape>();
@@ -75,7 +78,7 @@ public class InteractibleObject : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Interaction == InteractionType.TIMED && timerElapsed) {
+		if (Type == InteractionType.TIMED && timerElapsed) {
 			Unteract();
 			timerElapsed = false;
 		}
@@ -86,22 +89,14 @@ public class InteractibleObject : MonoBehaviour {
 	}
 	
 	public void Interact (GameObject player) {
+		if (reshape.CurrentShape != 1) {
+			collider2D.sharedMaterial = player.collider2D.sharedMaterial;
+		}
 		if(IsReshapable){
 			var playerControler = player.GetComponent<CharacterControl>();
 			reshape.CurrentShape = playerControler.Reshaper.CurrentShape;
 
-			if(Interaction == InteractionType.TIMED){
-				if (timer != null) {
-					timer.Stop ();
-				}
-				timer = new System.Timers.Timer(Timer);
-				timer.Elapsed += (sender, args) => {
-					timerElapsed = true;
-					timer.Stop();
-				};
-				timer.AutoReset = false;
-				timer.Start();
-			}
+			// Fire state change event
 			if (OnStateChange != null) {
 				OnStateChange(InteractionEvent.RESHAPE, gameObject);
 			}
@@ -109,12 +104,16 @@ public class InteractibleObject : MonoBehaviour {
 		if(IsInvisible && StaticVariables.HasPower(StaticVariables.Powers.REVEAL)){
 			GetComponent<Animator>().SetBool("Hidden", false);
 			gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+
+			// Fire state change event
 			if (OnStateChange != null) {
 				OnStateChange(InteractionEvent.SHOW, gameObject);
 			}
 		}
 		if(IsKillable){
 			IsDead = player.GetComponent<CharacterControl>().IsDead;
+
+			// Fire state change event
 			if (OnStateChange != null) {
 				if (IsDead)
 					OnStateChange(InteractionEvent.KILL, gameObject);
@@ -147,10 +146,20 @@ public class InteractibleObject : MonoBehaviour {
 				OnStateChange(InteractionEvent.WEIGHT_CHANGE, gameObject);
 			}
 		}
+
+		// Timed change
+		if (Type == InteractionType.TIMED) {
+			StopCoroutine("TimedEndInteraction");
+			timedCoroutine = StartCoroutine("TimedEndInteraction", InteractionTimer);
+		}
 	}
 	
 	public void Unteract(){
-		if (Interaction != InteractionType.INSTANT) return;
+		if (Type != InteractionType.INSTANT) return;
+		EndInteraction();
+	}
+
+	protected void EndInteraction() {
 		if(IsReshapable){
 			reshape.CurrentShape = reshape.OriginShape;
 		}
@@ -167,5 +176,12 @@ public class InteractibleObject : MonoBehaviour {
 			else
 				gameObject.rigidbody2D.mass = StaticVariables.LightWeight;
 		}
+	}
+
+	public IEnumerator TimedEndInteraction(float waitTime) {		
+		// Wait for respawn time
+		yield return new WaitForSeconds(waitTime / 1000);
+		
+		EndInteraction();
 	}
 }

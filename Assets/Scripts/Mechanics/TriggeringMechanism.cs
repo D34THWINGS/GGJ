@@ -1,20 +1,23 @@
 using UnityEngine;
 using System.Collections;
 
-public class TriggeringMechanism : MonoBehaviour {
-	
-	public enum EventNames {
-		VOID_ACTION,
-		ENABLE,
-		DISABLE
-	};
+namespace XRay.Mechanics {
 
-	public delegate void TriggerDelegate(EventNames eventName);
-	public TriggerDelegate OnTrigger;
-
-	protected void Trigger (EventNames eventName) {
-		if (OnTrigger != null) {
-			OnTrigger(eventName);
+	public class TriggeringMechanism : MonoBehaviour {
+		
+		public enum EventNames {
+			VOID_ACTION,
+			ENABLE,
+			DISABLE
+		};
+		
+		public delegate void TriggerDelegate(EventNames eventName);
+		public TriggerDelegate OnTrigger;
+		
+		protected void Trigger (EventNames eventName) {
+			if (OnTrigger != null) {
+				OnTrigger(eventName);
+			}
 		}
 	}
 }
