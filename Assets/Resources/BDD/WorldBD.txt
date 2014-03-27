@@ -1,0 +1,5 @@
+1;Beggining
+2;Easy
+3;Medium
+4;Advanced
+5;Hardcore
