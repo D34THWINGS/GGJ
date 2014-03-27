@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Timers;
+using XRay.Objects;
 
 namespace XRay.Mechanics.Triggering {
 
