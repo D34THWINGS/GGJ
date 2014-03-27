@@ -6,6 +6,7 @@ namespace XRay.UI {
 	public static class StaticVariables {
 		
 		public enum Powers {
+			VISION,
 			RESHAPE_CIRCLE,
 			REVEAL,
 			CHANGE_WEIGHT,

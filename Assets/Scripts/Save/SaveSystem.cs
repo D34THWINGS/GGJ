@@ -1,21 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SaveSystem : MonoBehaviour {
-	public int BestLevel;
+namespace XRay.Save {
 
-	// Use this for initialization
-	void Start () {
-		if(PlayerPrefs.HasKey("best_level")){
-			BestLevel = PlayerPrefs.GetInt("best_level");
-			print (BestLevel);
-		}else {
-			PlayerPrefs.SetInt("best_level", 1);
+	public static class SaveSystem {
+
+		public static void SaveLevel(int level) {
+			BestLevel = level;
+			CurrentLevel = level;
 		}
+		
+		public static int BestLevel {
+			get {
+				return PlayerPrefs.GetInt("best_level");
+			}
+			set {
+				if(value > BestLevel) {
+					PlayerPrefs.SetInt("best_level", value);
+				}
+			}
+		}
+		
+		public static int CurrentLevel {
+			get {
+				return PlayerPrefs.GetInt("current_level");
+			}
+			set {
+				if(value > 0)
+					PlayerPrefs.SetInt("current_level", value);
+			}
+		}
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 }
