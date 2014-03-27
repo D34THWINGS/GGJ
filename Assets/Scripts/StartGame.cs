@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using XRay.Save;
 
 namespace XRay {
 
@@ -8,10 +9,10 @@ namespace XRay {
 		// Use this for initialization
 		void Start () {
 			if(!PlayerPrefs.HasKey("best_level")){
-				PlayerPrefs.SetInt("best_level", 1);
+				SaveSystem.BestLevel = 1;
 			}
 			if(!PlayerPrefs.HasKey("current_level")){
-				PlayerPrefs.SetInt("current_level", 0);
+				SaveSystem.CurrentLevel = 0;
 			}
 		}
 		
@@ -23,7 +24,7 @@ namespace XRay {
 		void OnMouseUp () {
 			if(gameObject.name == "Start"){
 				Application.LoadLevel(1);
-				PlayerPrefs.SetInt("current_level", 1);
+				SaveSystem.CurrentLevel = 1;
 			}else if(gameObject.name == "Demo")
 				Application.LoadLevel(7);
 			else
