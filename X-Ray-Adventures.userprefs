@@ -1,11 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\TranformInterface.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\LevelEditor\Cursor.cs">
     <Files>
-      <File FileName="Assets\Scripts\Objects\InteractibleObject.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\LevelEditor\Cursor.cs" Line="33" Column="39" />
       <File FileName="Assets\Scripts\Player\CharacterControl.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\TranformInterface.cs" Line="59" Column="7" />
-      <File FileName="Assets\Scripts\UI\StaticVariables.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
