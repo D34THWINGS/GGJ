@@ -14,21 +14,29 @@ namespace XRay {
 			if(!PlayerPrefs.HasKey("current_level")){
 				SaveSystem.CurrentLevel = 0;
 			}
+			if(SaveSystem.CurrentLevel == 0){
+				GameObject.Find("Continue").collider.isTrigger = false;
+			}
 		}
 		
 		// Update is called once per frame
 		void Update () {
-			
+
 		}
 		
-		void OnMouseUp () {
-			if(gameObject.name == "Start"){
-				Application.LoadLevel(1);
+		void OnClick () {
+			if(gameObject.name == "NewGame"){
+				print ("NewGame");
+				SaveSystem.BestLevel = 1;
 				SaveSystem.CurrentLevel = 1;
-			}else if(gameObject.name == "Demo")
-				Application.LoadLevel(7);
-			else
-				print ("Credits");
+				Application.LoadLevel(1);
+			}else if(gameObject.name == "Continue"){
+				print ("Continue");
+				Application.LoadLevel(SaveSystem.CurrentLevel);
+			}else if(gameObject.name == "Exit"){
+				print ("Exit");
+				Application.Quit();
+			}
 		}
 	}
 
