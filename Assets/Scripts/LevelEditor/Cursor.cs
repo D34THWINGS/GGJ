@@ -30,7 +30,7 @@ namespace XRay.LevelEditor {
 			}
 
 			// Scaling object
-			if (Input.GetKeyDown(KeyCode.Plus))
+			//if (Input.GetKeyDown(KeyCode.Plus))
 
 			// Cursor position
 			var h = Input.GetAxis("Horizontal");
