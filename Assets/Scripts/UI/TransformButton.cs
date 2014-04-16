@@ -38,7 +38,7 @@ namespace XRay.UI
 			this.name = "";
 		}
 
-		public void Init() {
+		public TransformButton Init() {
 			foreach (var btn in ChildButtons) {
 				btn.Value.name = btn.Key;
 				btn.Value.Position = Position;
@@ -48,6 +48,7 @@ namespace XRay.UI
 				};
 				btn.Value.Init();
 			}
+			return this;
 		}
 
 		protected void Draw (Vector2 position) {

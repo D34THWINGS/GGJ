@@ -59,8 +59,7 @@ namespace XRay.UI {
 					}
 				},
 				Spacing = 100f, Enable = true, Position = new Vector2(Screen.width / 2, Screen.height - 10)
-			};
-			btnTree.Init();
+			}.Init();
 			btnTree.OnPress += (Name) => {
 				print (Name);
 				switch (Name) {
