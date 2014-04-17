@@ -15,7 +15,7 @@ namespace XRay.Save {
 				return PlayerPrefs.GetInt("best_level");
 			}
 			set {
-				if(value > BestLevel) {
+				if(value > BestLevel || value == 1) {
 					PlayerPrefs.SetInt("best_level", value);
 				}
 			}
