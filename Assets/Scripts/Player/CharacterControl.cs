@@ -25,7 +25,7 @@ namespace XRay.Player {
 		
 		// Grounding
 		[HideInInspector]
-		public bool IsGrounded = false;			// Condition whether the player is on the ground
+		public Collider2D IsGrounded;			// Condition whether the player is on the ground
 		public Transform GroundTransform;		// Position of the ground detector
 		public float GroundRadius = 0.3f;		// Radius of the ground detector
 		public LayerMask GroundLayers;			// Layers which are considered as ground
@@ -34,6 +34,7 @@ namespace XRay.Player {
 		public GameObject cone;
 		
 		private bool doubleJump = true;
+		private Transform OriginElevator;
 		
 		void Start () {
 			Reshaper = GetComponent<Reshape>();
@@ -73,6 +74,12 @@ namespace XRay.Player {
 
 			if(StaticVariables.HasPower(StaticVariables.Powers.VISION)){
 				cone.SetActive(true);
+			}
+
+			if(IsGrounded) {
+				if(IsGrounded.transform.parent.transform.parent.name == "Elevator") {
+					rigidbody2D.transform.position = new Vector2(IsGrounded.transform.parent.transform.position.x, rigidbody2D.transform.position.y);
+				}
 			}
 		}
 		
@@ -116,6 +123,10 @@ namespace XRay.Player {
 				// Cast die event
 				if (OnDie != null)
 					OnDie();
+			}
+
+			if(theCollision.transform.parent.transform.parent.name == "Elevator"){
+				OriginElevator = theCollision.transform.parent.transform.parent.rigidbody2D.transform;
 			}
 		}
 		
