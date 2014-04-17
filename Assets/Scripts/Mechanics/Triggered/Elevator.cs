@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
+using XRay.Player;
 
 namespace XRay.Mechanics.Triggered {
 
@@ -8,27 +9,38 @@ namespace XRay.Mechanics.Triggered {
 		public Transform Origin;
 		public Transform Target;
 		public bool Started = false;
+		public float journeyLength = 3f;
+		public int timeStop;
+
+		private float startTime;
+		private bool freez;
+		private bool checkContact;
 		
 		protected override void Start() {
 			base.Start();
 			transform.position = Origin.position;
+			startTime = Time.time;
+			freez = false;
+			timeStop = timeStop * 1000;
+			checkContact = false;
 		}
 		
 		// Update is called once per frame
 		void FixedUpdate () {
-			if(Started) {
-				Vector2 move;
-				move = Target.position - transform.position;
-				move.Normalize();
-				rigidbody2D.velocity = move * Speed;
-				
-				if (Vector2.Distance(transform.position, Target.position) < 0.01f) {
-					Revert();
+			if(Started && !freez) {				
+
+				float distCovered = (Time.time - startTime) * Speed;
+				float fracJourney = distCovered / journeyLength;
+				transform.position = Vector3.Lerp(Origin.position, Target.position, fracJourney);
+
+				if (transform.position == Target.position) {
+					StartCoroutine(RevertWait(timeStop));
 				}
 			}
 		}
 		
 		public void Revert() {
+			startTime = Time.time;
 			var target = Target;
 			Target = Origin;
 			Origin = target;
@@ -47,6 +59,15 @@ namespace XRay.Mechanics.Triggered {
 			default:
 				break;
 			}
+		}
+
+		private IEnumerator RevertWait(float waitTime) {		
+			// Wait for respawn time
+
+			freez = true;
+			yield return new WaitForSeconds(waitTime / 1000);
+			Revert();
+			freez = false;
 		}
 	}
 }
