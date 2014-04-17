@@ -55,9 +55,11 @@ public class GenerateWorlds : MonoBehaviour {
 			if(SaveSystem.BestLevel < Int32.Parse(LevelData[0])){
 				newWorldLevel.GetComponent<BoxCollider>().enabled = false;
 				newWorldLevel.GetComponentInChildren<UILabel>().text = "LOCKED";
+				newWorldLevel.GetComponentInChildren<UISprite>().color = new Color(47f/255f, 43f/255f, 43f/255f);
 			}
 			WorldParent.GetComponentInChildren<UIGrid>().Reposition();
 		}
+		GridParent.GetComponent<UICenterOnChild>().Recenter();
 	}
 	
 	// Update is called once per frame
