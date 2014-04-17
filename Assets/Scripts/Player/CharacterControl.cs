@@ -41,39 +41,41 @@ namespace XRay.Player {
 		}
 		
 		void FixedUpdate () {
-			// Cache the horizontal input.
-			float h = Input.GetAxis("Horizontal");
-			
-			if(Mathf.Sign(h) != Mathf.Sign(rigidbody2D.velocity.x) && h != 0) {
-				rigidbody2D.velocity = new Vector2(0f, rigidbody2D.velocity.y);
-			}
-			
-			// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-			if(h * rigidbody2D.velocity.x < MaxSpeed){
-				if (IsGrounded)
-					rigidbody2D.AddForce(Vector2.right * h * MoveForce);
-				else 
-					rigidbody2D.AddForce(Vector2.right * h * (MoveForce / 10));
-			}
-			
-			// If the player's horizontal velocity is greater than the maxSpeed...
-			if(Mathf.Abs(rigidbody2D.velocity.x) > MaxSpeed)
-				// ... set the player's velocity to the maxSpeed in the x axis.
-				rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * MaxSpeed, rigidbody2D.velocity.y);
-			
-			// If the player should jump...
-			if(Jump)
-			{
-				// Add a vertical force to the player.
-				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0f);
-				rigidbody2D.AddForce(new Vector2(0f, JumpForce));
+			if(!XRay.UI.StaticVariables.isOnTuto){
+				// Cache the horizontal input.
+				float h = Input.GetAxis("Horizontal");
 				
-				// Make sure the player can't jump again until the jump conditions from Update are satisfied.
-				Jump = false;
-			}
+				if(Mathf.Sign(h) != Mathf.Sign(rigidbody2D.velocity.x) && h != 0) {
+					rigidbody2D.velocity = new Vector2(0f, rigidbody2D.velocity.y);
+				}
+				
+				// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
+				if(h * rigidbody2D.velocity.x < MaxSpeed){
+					if (IsGrounded)
+						rigidbody2D.AddForce(Vector2.right * h * MoveForce);
+					else 
+						rigidbody2D.AddForce(Vector2.right * h * (MoveForce / 10));
+				}
+				
+				// If the player's horizontal velocity is greater than the maxSpeed...
+				if(Mathf.Abs(rigidbody2D.velocity.x) > MaxSpeed)
+					// ... set the player's velocity to the maxSpeed in the x axis.
+					rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * MaxSpeed, rigidbody2D.velocity.y);
+				
+				// If the player should jump...
+				if(Jump)
+				{
+					// Add a vertical force to the player.
+					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0f);
+					rigidbody2D.AddForce(new Vector2(0f, JumpForce));
+					
+					// Make sure the player can't jump again until the jump conditions from Update are satisfied.
+					Jump = false;
+				}
 
-			if(StaticVariables.HasPower(StaticVariables.Powers.VISION)){
-				cone.SetActive(true);
+				if(StaticVariables.HasPower(StaticVariables.Powers.VISION)){
+					cone.SetActive(true);
+				}
 			}
 
 			if(IsGrounded) {
@@ -84,31 +86,33 @@ namespace XRay.Player {
 		}
 		
 		void Update () {
-			// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
-			IsGrounded = Physics2D.OverlapArea(
-				new Vector2(GroundTransform.position.x - 0.48f, GroundTransform.position.y - 0.1f), 
-				new Vector2(GroundTransform.position.x + 0.48f, GroundTransform.position.y + 0.1f),
-				GroundLayers
-				);
-			
-			// If the player is grounded, reset the double jump
-			if (IsGrounded) {
-				doubleJump = false;
+			if(!XRay.UI.StaticVariables.isOnTuto){
+				// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
+				IsGrounded = Physics2D.OverlapArea(
+					new Vector2(GroundTransform.position.x - 0.48f, GroundTransform.position.y - 0.1f), 
+					new Vector2(GroundTransform.position.x + 0.48f, GroundTransform.position.y + 0.1f),
+					GroundLayers
+					);
+				
+				// If the player is grounded, reset the double jump
+				if (IsGrounded) {
+					doubleJump = false;
+				}
+				
+				// If the jump button is pressed and the player is grounded then the player should jump.
+				if (Input.GetButtonDown("Jump") && (IsGrounded || !doubleJump)) {
+					Jump = true;
+					if (!IsGrounded)
+						doubleJump = true;
+				}
+				
+				// Death effects
+				Camera.main.GetComponent<MotionBlur>().enabled = IsDead;
+				Camera.main.GetComponent<GrayscaleEffect>().enabled = IsDead;
+				
+				// Apply camera distance
+				Camera.main.orthographicSize = CameraDistance;
 			}
-			
-			// If the jump button is pressed and the player is grounded then the player should jump.
-			if (Input.GetButtonDown("Jump") && (IsGrounded || !doubleJump)) {
-				Jump = true;
-				if (!IsGrounded)
-					doubleJump = true;
-			}
-			
-			// Death effects
-			Camera.main.GetComponent<MotionBlur>().enabled = IsDead;
-			Camera.main.GetComponent<GrayscaleEffect>().enabled = IsDead;
-			
-			// Apply camera distance
-			Camera.main.orthographicSize = CameraDistance;
 		}
 		
 		void OnCollisionEnter2D (Collision2D theCollision){

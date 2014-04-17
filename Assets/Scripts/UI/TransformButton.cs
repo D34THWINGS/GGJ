@@ -92,7 +92,9 @@ namespace XRay.UI
 
 		public void Update() {
 			if (Input.anyKeyDown) {
-				ChildButtons.ToList().ForEach(b => b.Value.GetKeys());
+				if(!XRay.UI.StaticVariables.isOnTuto){
+					ChildButtons.ToList().ForEach(b => b.Value.GetKeys());
+				}
 			}
 		}
 

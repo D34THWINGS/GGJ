@@ -1,22 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\LevelSelection\ChangeWorldPanel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\TutoTrigger.cs">
     <Files>
-      <File FileName="Assets\Resources\BDD\LevelBD.txt" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\StaticVariables.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\Test.cs" Line="1" Column="1" />
-      <File FileName="Assets\NGUI\Scripts\UI\UIInputSaved.cs" Line="1" Column="1" />
-      <File FileName="Assets\NGUI\ReadMe - 2.7.0.txt" Line="1" Column="1" />
-      <File FileName="Assets\NGUI\Scripts\Interaction\UICenterOnChild.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\EnableCenterObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Save\SaveSystem.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelSelection\OnCLickLevel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\StartGame.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelSelection\AnimationPanel.cs" Line="29" Column="6" />
-      <File FileName="Assets\NGUI\Scripts\Interaction\UIScrollBar.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelSelection\GenerateLevel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelSelection\GenerateWorlds.cs" Line="61" Column="4" />
-      <File FileName="Assets\Scripts\LevelSelection\ChangeWorldPanel.cs" Line="8" Column="52" />
+      <File FileName="Assets\Scripts\UI\TutoTrigger.cs" Line="11" Column="31" />
+      <File FileName="Assets\Scripts\UI\StaticVariables.cs" Line="35" Column="39" />
+      <File FileName="Assets\Scripts\Player\CharacterControl.cs" Line="110" Column="3" />
+      <File FileName="Assets\Scripts\Player\FollowMouse.cs" Line="46" Column="5" />
+      <File FileName="Assets\Scripts\UI\TransformButton.cs" Line="97" Column="6" />
+      <File FileName="Assets\Scripts\UI\TranformInterface.cs" Line="113" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
