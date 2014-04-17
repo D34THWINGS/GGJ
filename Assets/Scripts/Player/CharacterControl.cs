@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Timers;
 using XRay.Objects;
+using XRay.UI;
 
 namespace XRay.Player {
 
@@ -28,6 +29,9 @@ namespace XRay.Player {
 		public Transform GroundTransform;		// Position of the ground detector
 		public float GroundRadius = 0.3f;		// Radius of the ground detector
 		public LayerMask GroundLayers;			// Layers which are considered as ground
+		
+		[HideInInspector]
+		public GameObject cone;
 		
 		private bool doubleJump = true;
 		
@@ -65,6 +69,10 @@ namespace XRay.Player {
 				
 				// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 				Jump = false;
+			}
+
+			if(StaticVariables.HasPower(StaticVariables.Powers.VISION)){
+				cone.SetActive(true);
 			}
 		}
 		
