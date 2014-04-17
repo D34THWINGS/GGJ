@@ -14,6 +14,7 @@ namespace XRay.UI {
 		}
 		
 		private static List<Powers> EnabledPowers = new List<Powers>(){
+			Powers.VISION,
 			Powers.CHANGE_WEIGHT,
 			Powers.RESHAPE_CIRCLE,
 			Powers.REVEAL,
