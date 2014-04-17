@@ -27,6 +27,10 @@ namespace XRay.LevelEditor {
 		public Texture ScaleXYButton;
 		public Texture ScaleXButton;
 		public Texture ScaleYButton;
+		public Texture ShapeButton;
+		public Texture PrefabButton;
+		public Texture InteractibleButton;
+		public Texture CopyButton;
 				
 		private XRayObjects SelectedObjectType = XRayObjects.GROUND;
 		private GameObject ObjectHolder;
@@ -48,31 +52,37 @@ namespace XRay.LevelEditor {
 
 			btnTree = new TransformButton {
 				ChildButtons = new Dictionary<string, TransformButton> {
-					{
-						"Shape", new TransformButton { BtnTexture = PlaceButton, JoystickButton = KeyCode.JoystickButton4, KeyboardButton = KeyCode.Q, Active = true }
+					{ 
+						"Shape", 
+						new TransformButton { 
+							BtnTexture = PlaceButton, KeyboardButton = KeyCode.Q, Active = true, Spacing = 5f,
+							ButtonTrigger = () => (Input.GetKey(KeyCode.JoystickButton4) && Input.GetKeyDown(KeyCode.JoystickButton0)),
+							ChildButtons = new Dictionary<string, TransformButton> {
+								{ "Prefab", new TransformButton { BtnTexture = PrefabButton, ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow)) } },
+								{ "Interactible", new TransformButton {BtnTexture = InteractibleButton, ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow)) } }
+							}
+						} 
 					},{
-						"Scale", new TransformButton {
-							BtnTexture = ScaleButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.E, Active = true,
+						"Scale", 
+						new TransformButton {
+							BtnTexture = ScaleButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.E, Spacing = 5f,
 							ChildButtons = new Dictionary<string, TransformButton> {
 								{"XY", new TransformButton { BtnTexture = ScaleXButton, JoystickButton = KeyCode.JoystickButton1, KeyboardButton = KeyCode.Alpha1 }},
-								{"X", new TransformButton { BtnTexture = ScaleXYButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.Alpha1 }},
-								{"Y", new TransformButton { BtnTexture = ScaleYButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.Alpha2 }}
+								{"X", new TransformButton { BtnTexture = ScaleXYButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.Alpha2 }},
+								{"Y", new TransformButton { BtnTexture = ScaleYButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.Alpha3 }}
 							}
 						}
-					},{
-						"Rotate", new TransformButton { BtnTexture = RotateButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.R, Active = true }
-					}
+					},
+					{ "Rotate", new TransformButton { BtnTexture = RotateButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.R } },
+					{ "Copy", new TransformButton { BtnTexture = RotateButton, JoystickButton = KeyCode.JoystickButton5, KeyboardButton = KeyCode.C } }
 				},
-				Spacing = 100f, Enable = true, Position = new Vector2(Screen.width / 2, Screen.height - 10)
+				Spacing = 10f, Enable = true, Position = new Vector2(Screen.width / 2, Screen.height - 10)
 			}.Init();
 			btnTree.OnPress += (Name) => {
 				print (Name);
 				switch (Name) {
 				case "Shape":
-					if (!HasCurrentObject) {
 
-					}
-					placeMode = true;
 					break;
 				case "Scale.XY":
 					currentTool = EditorFunctions.SCALE;
@@ -86,6 +96,12 @@ namespace XRay.LevelEditor {
 				case "Rotate":
 					currentTool = EditorFunctions.ROTATE;
 					break;
+				case "Copy":
+					if (HasCurrentObject) {
+						PlaceCurrentObject();
+						placeMode = true;
+					}
+					break;
 				default:
 					break;
 				}
@@ -93,6 +109,8 @@ namespace XRay.LevelEditor {
 		}
 		
 		public void Update () {
+			XRayInput.Update();
+
 			// Cancel placing
 			if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
 				if (!placeMode) {
@@ -111,8 +129,8 @@ namespace XRay.LevelEditor {
 						// Grab object
 						var overlap = Physics2D.OverlapPoint(transform.position);
 						if (overlap) {
+							transform.position = overlap.transform.position;
 							overlap.transform.parent = ObjectHolder.transform;
-							overlap.transform.position = transform.position;
 						}
 					}
 				} else {
@@ -125,12 +143,16 @@ namespace XRay.LevelEditor {
 				// Scaling object
 				if (currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEX || currentTool == EditorFunctions.SCALEY) {
 					var diff = new Vector3(
-						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEX ? 0.1f : 0f, 
-						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEY ? 0.1f : 0f);
+						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEX ? 0.05f : 0f, 
+						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEY ? 0.05f : 0f);
+					var newScale = new Vector3();
 					if (Input.GetKey(KeyCode.KeypadPlus)) {
-						ObjectHolder.transform.GetChild(0).localScale += diff;
+						newScale = ObjectHolder.transform.GetChild(0).localScale + diff;
 					} else if (Input.GetKey(KeyCode.KeypadMinus)) {
-						ObjectHolder.transform.GetChild(0).localScale -= diff;
+						newScale = ObjectHolder.transform.GetChild(0).localScale - diff;
+					}
+					if (newScale.x > 0 && newScale.y > 0) {
+						ObjectHolder.transform.GetChild(0).localScale = newScale;
 					}
 				}
 
@@ -143,6 +165,10 @@ namespace XRay.LevelEditor {
 						ObjectHolder.transform.GetChild(0).rotation = Quaternion.Euler(rot.eulerAngles - diff);
 					}
 				}
+
+				if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.JoystickButton5)) {
+					RemoveCurrentObject();
+				}
 			}
 			
 			// Cursor position
@@ -150,6 +176,11 @@ namespace XRay.LevelEditor {
 			var v = Input.GetAxis("Vertical");
 			var move = new Vector3(h * Speed, v * Speed, 0);
 			transform.position += move;
+
+			// Buttons activation
+			btnTree["Scale"].Active = HasCurrentObject;
+			btnTree["Rotate"].Active = HasCurrentObject;
+			btnTree["Copy"].Active = HasCurrentObject && !placeMode;
 
 			btnTree.Update();
 		}

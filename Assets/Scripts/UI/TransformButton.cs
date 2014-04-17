@@ -7,12 +7,15 @@ namespace XRay.UI
 {
 	public class TransformButton
 	{
+		public delegate bool TriggerAction();
+
 		public Dictionary<string, TransformButton> ChildButtons = new Dictionary<string, TransformButton>();
 		public Texture BtnTexture;
 		public bool Active = true;
 		public bool Enable = false;
 		public KeyCode JoystickButton;
 		public KeyCode KeyboardButton;
+		public TriggerAction ButtonTrigger;
 		public Vector2 Position;
 
 		public float Spacing = 100f;
@@ -91,16 +94,16 @@ namespace XRay.UI
 		}
 
 		public void Update() {
-			if (Input.anyKeyDown) {
-				if(!XRay.UI.StaticVariables.isOnTuto){
-					ChildButtons.ToList().ForEach(b => b.Value.GetKeys());
-				}
+			if (Input.anyKeyDown || XRayInput.AnyKeyDown) {
+				ChildButtons.ToList().ForEach(b => b.Value.GetKeys());
 			}
 		}
 
 		protected bool GetKeys() {
 			if (!Active) return false;
-			if (Input.GetKeyDown(JoystickButton) || Input.GetKeyDown(KeyboardButton)) {
+			if ((JoystickButton != null && Input.GetKeyDown(JoystickButton)) || 
+			    (KeyboardButton != null && Input.GetKeyDown(KeyboardButton)) || 
+			    (ButtonTrigger != null && ButtonTrigger())) {
 				if (HasChild)
 					Enable = !Enable;
 				else
