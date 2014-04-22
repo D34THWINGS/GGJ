@@ -65,9 +65,15 @@ namespace XRay.Mechanics.Triggered {
 			// Wait for respawn time
 
 			freez = true;
+			GameObject.Find("Limit").collider2D.enabled = false;
 			yield return new WaitForSeconds(waitTime / 1000);
 			Revert();
 			freez = false;
+			GameObject.Find("Limit").collider2D.enabled = true;
+		}
+
+		public bool GetFreez () {
+			return freez;
 		}
 	}
 }
