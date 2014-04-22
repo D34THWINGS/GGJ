@@ -1,220 +1,300 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using XRay.UI;
 
 namespace XRay.LevelEditor {
-	
-	public enum XRayObjects {
-		INTERACTIBLE,
-		GROUND
-	}
-	
-	public enum EditorFunctions {
-		NONE,
-		SCALEX,
-		SCALEY,
-		SCALE,
-		ROTATE
-	}
-	
-	public class Cursor : MonoBehaviour {
-		
-		public float Speed = 0.2f;
-		public Texture PlaceButton;
-		public Texture ScaleButton;
-		public Texture RotateButton;
-		public Texture ScaleXYButton;
-		public Texture ScaleXButton;
-		public Texture ScaleYButton;
-		public Texture ShapeButton;
-		public Texture PrefabButton;
-		public Texture InteractibleButton;
-		public Texture CopyButton;
-				
-		private XRayObjects SelectedObjectType = XRayObjects.GROUND;
-		private GameObject ObjectHolder;
-		private GameObject LevelHolder;
-		private EditorFunctions currentTool = EditorFunctions.NONE;
-		private int colorChangeDir = -1;
-		private TransformButton btnTree;
-		private bool placeMode = true;
+    public enum XRayObjects {
+        Interactible,
+        Ground
+    }
 
-		public bool HasCurrentObject {
-			get {
-				return ObjectHolder.transform.childCount > 0;
-			}
-		}
-		
-		public void Start () {
-			ObjectHolder = GameObject.Find("ObjectHolder");
-			LevelHolder = GameObject.Find("LevelHolder");
+    public enum EditorFunctions {
+        None,
+        Scalex,
+        Scaley,
+        Scale,
+        Rotate
+    }
 
-			btnTree = new TransformButton {
-				ChildButtons = new Dictionary<string, TransformButton> {
-					{ 
-						"Shape", 
-						new TransformButton { 
-							BtnTexture = PlaceButton, KeyboardButton = KeyCode.Q, Active = true, Spacing = 5f,
-							ButtonTrigger = () => (Input.GetKey(KeyCode.JoystickButton4) && Input.GetKeyDown(KeyCode.JoystickButton0)),
-							ChildButtons = new Dictionary<string, TransformButton> {
-								{ "Prefab", new TransformButton { BtnTexture = PrefabButton, ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow)) } },
-								{ "Interactible", new TransformButton {BtnTexture = InteractibleButton, ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow)) } }
-							}
-						} 
-					},{
-						"Scale", 
-						new TransformButton {
-							BtnTexture = ScaleButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.E, Spacing = 5f,
-							ChildButtons = new Dictionary<string, TransformButton> {
-								{"XY", new TransformButton { BtnTexture = ScaleXButton, JoystickButton = KeyCode.JoystickButton1, KeyboardButton = KeyCode.Alpha1 }},
-								{"X", new TransformButton { BtnTexture = ScaleXYButton, JoystickButton = KeyCode.JoystickButton2, KeyboardButton = KeyCode.Alpha2 }},
-								{"Y", new TransformButton { BtnTexture = ScaleYButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.Alpha3 }}
-							}
-						}
-					},
-					{ "Rotate", new TransformButton { BtnTexture = RotateButton, JoystickButton = KeyCode.JoystickButton3, KeyboardButton = KeyCode.R } },
-					{ "Copy", new TransformButton { BtnTexture = RotateButton, JoystickButton = KeyCode.JoystickButton5, KeyboardButton = KeyCode.C } }
-				},
-				Spacing = 10f, Enable = true, Position = new Vector2(Screen.width / 2, Screen.height - 10)
-			}.Init();
-			btnTree.OnPress += (Name) => {
-				print (Name);
-				switch (Name) {
-				case "Shape":
+    public class Cursor : MonoBehaviour {
+        public float Speed = 0.2f;
 
-					break;
-				case "Scale.XY":
-					currentTool = EditorFunctions.SCALE;
-					break;
-				case "Scale.X":
-					currentTool = EditorFunctions.SCALEX;
-					break;
-				case "Scale.Y":
-					currentTool = EditorFunctions.SCALEY;
-					break;
-				case "Rotate":
-					currentTool = EditorFunctions.ROTATE;
-					break;
-				case "Copy":
-					if (HasCurrentObject) {
-						PlaceCurrentObject();
-						placeMode = true;
-					}
-					break;
-				default:
-					break;
-				}
-			};
-		}
-		
-		public void Update () {
-			XRayInput.Update();
+        private XRayObjects _selectedObjectType = XRayObjects.Ground;
+        private GameObject _objectHolder;
+        private GameObject _levelHolder;
+        private EditorFunctions _currentTool = EditorFunctions.None;
+        private int _colorChangeDir = -1;
+        private TransformButton _btnTree;
+        private bool _placeMode = true;
+        private Transform _grabOrigin;
 
-			// Cancel placing
-			if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton1)) {
-				if (!placeMode) {
-					DropCurrentObject();
-				} else {
-					RemoveCurrentObject();
-				}
-				placeMode = false;
-				currentTool = EditorFunctions.NONE;
-			}
+        /// <summary>
+        /// Returns the object holded into the cursor.
+        /// </summary>
+        public GameObject CurrentObject {
+            get { return HasCurrentObject ? _objectHolder.transform.GetChild(0).gameObject : null; }
+            set {
+                if (HasCurrentObject) {
+                    if (_placeMode) {
+                        RemoveCurrentObject();
+                    }
+                    else {
+                        DropCurrentObject();
+                    }
+                }
+                value.transform.parent = _objectHolder.transform;
+            }
+        }
 
-			if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) {
-				if (!placeMode) {
-					// Drop object
-					if (!DropCurrentObject()) {
-						// Grab object
-						var overlap = Physics2D.OverlapPoint(transform.position);
-						if (overlap) {
-							transform.position = overlap.transform.position;
-							overlap.transform.parent = ObjectHolder.transform;
-						}
-					}
-				} else {
-					// Place object
-					PlaceCurrentObject();
-				}
-			}
-			
-			if (HasCurrentObject) {
-				// Scaling object
-				if (currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEX || currentTool == EditorFunctions.SCALEY) {
-					var diff = new Vector3(
-						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEX ? 0.05f : 0f, 
-						currentTool == EditorFunctions.SCALE || currentTool == EditorFunctions.SCALEY ? 0.05f : 0f);
-					var newScale = new Vector3();
-					if (Input.GetKey(KeyCode.KeypadPlus)) {
-						newScale = ObjectHolder.transform.GetChild(0).localScale + diff;
-					} else if (Input.GetKey(KeyCode.KeypadMinus)) {
-						newScale = ObjectHolder.transform.GetChild(0).localScale - diff;
-					}
-					if (newScale.x > 0 && newScale.y > 0) {
-						ObjectHolder.transform.GetChild(0).localScale = newScale;
-					}
-				}
+        /// <summary>
+        /// Return if an object is holded into the cursor
+        /// </summary>
+        public bool HasCurrentObject {
+            get { return _objectHolder.transform.childCount > 0; }
+        }
 
-				if (currentTool == EditorFunctions.ROTATE) {
-					var diff = new Vector3(0f, 0f, 1f);
-					var rot = ObjectHolder.transform.GetChild(0).rotation;
-					if (Input.GetKey(KeyCode.KeypadPlus)) {
-						ObjectHolder.transform.GetChild(0).rotation = Quaternion.Euler(rot.eulerAngles + diff);
-					} else if (Input.GetKey(KeyCode.KeypadMinus)) {
-						ObjectHolder.transform.GetChild(0).rotation = Quaternion.Euler(rot.eulerAngles - diff);
-					}
-				}
+        public void Start() {
+            _objectHolder = GameObject.Find("ObjectHolder");
+            _levelHolder = GameObject.Find("LevelHolder");
 
-				if (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.JoystickButton5)) {
-					RemoveCurrentObject();
-				}
-			}
-			
-			// Cursor position
-			var h = Input.GetAxis("Horizontal");
-			var v = Input.GetAxis("Vertical");
-			var move = new Vector3(h * Speed, v * Speed, 0);
-			transform.position += move;
+            var interactiveObject = Resources.Load("Prefabs/InteractibleBlock", typeof (GameObject)) as GameObject;
 
-			// Buttons activation
-			btnTree["Scale"].Active = HasCurrentObject;
-			btnTree["Rotate"].Active = HasCurrentObject;
-			btnTree["Copy"].Active = HasCurrentObject && !placeMode;
+            // Interface creation
+            _btnTree = new TransformButton("Root") {
+                ChildButtons = new List<TransformButton> {
+                    new TransformButton("Shape") {
+                        KeyboardButton = KeyCode.Q,
+                        Active = true,
+                        Spacing = 5f,
+                        ButtonTrigger =
+                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button4, KeyCode.Joystick1Button0),
+                        ChildButtons = new List<TransformButton> {
+                            new TransformButton("Interactible") {
+                                ButtonTrigger =
+                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow))
+                            },
+                            new TransformButton("Prefab") {
+                                ButtonTrigger =
+                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow))
+                            }
+                        }
+                    }
+                    ,
+                    new TransformButton("Scale") {
+                        JoystickButton = KeyCode.JoystickButton2,
+                        KeyboardButton = KeyCode.E,
+                        Spacing = 5f,
+                        ChildButtons = new List<TransformButton> {
+                            new TransformButton("XY") {
+                                ButtonTrigger =
+                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow)),
+                                KeyboardButton = KeyCode.Alpha1
+                            },
+                            new TransformButton("X") {
+                                ButtonTrigger =
+                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickUpArrow)),
+                                KeyboardButton = KeyCode.Alpha2
+                            },
+                            new TransformButton("Y") {
+                                ButtonTrigger =
+                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow)),
+                                KeyboardButton = KeyCode.Alpha3
+                            }
+                        }
+                    }
+                    ,
+                    new TransformButton("Rotate") {
+                        JoystickButton = KeyCode.JoystickButton3,
+                        KeyboardButton = KeyCode.R
+                    },
+                    new TransformButton("Copy") {
+                        KeyboardButton = KeyCode.C,
+                        ButtonTrigger =
+                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button5, KeyCode.Joystick1Button0)
+                    },
+                    new TransformButton("Delete") {
+                        ButtonTrigger =
+                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button5, KeyCode.Joystick1Button1),
+                        KeyboardButton = KeyCode.Delete
+                    },
+                    new TransformButton("Place") {
+                        JoystickButton = KeyCode.JoystickButton0,
+                        KeyboardButton = KeyCode.Space
+                    },
+                    new TransformButton("Cancel") {
+                        JoystickButton = KeyCode.Joystick1Button1,
+                        KeyboardButton = KeyCode.Escape
+                    },
+                    new TransformButton("Grab") {
+                        JoystickButton = KeyCode.JoystickButton0,
+                        KeyboardButton = KeyCode.Space
+                    }
+                },
+                Spacing = 10f,
+                Enabled = true,
+                Position = new Vector2((float) Screen.width/2, Screen.height - 10)
+            }.Init("Editor");
 
-			btnTree.Update();
-		}
+            // Bindings
+            _btnTree.OnPress += btnName => {
+                print(btnName);
+                switch (btnName) {
+                    case "Shape.Interactible":
+                        CurrentObject =
+                            Instantiate(interactiveObject, transform.position, new Quaternion()) as GameObject;
+                        _placeMode = true;
+                        break;
+                    case "Scale.XY":
+                        _currentTool = EditorFunctions.Scale;
+                        break;
+                    case "Scale.X":
+                        _currentTool = EditorFunctions.Scalex;
+                        break;
+                    case "Scale.Y":
+                        _currentTool = EditorFunctions.Scaley;
+                        break;
+                    case "Rotate":
+                        _currentTool = EditorFunctions.Rotate;
+                        break;
+                    case "Copy":
+                        if (HasCurrentObject) {
+                            PlaceCurrentObject();
+                            _placeMode = true;
+                        }
+                        break;
+                    case "Delete":
+                        RemoveCurrentObject();
+                        break;
+                    case "Place":
+                        if (!_placeMode) {
+                            DropCurrentObject();
+                        }
+                        else {
+                            PlaceCurrentObject();
+                        }
+                        break;
+                    case "Cancel":
+                        if (!_placeMode) {
+                            CurrentObject.transform.position = _grabOrigin.position;
+                            CurrentObject.transform.localScale = _grabOrigin.localScale;
+                            CurrentObject.transform.rotation = _grabOrigin.rotation;
+                            DropCurrentObject();
+                        }
+                        else {
+                            RemoveCurrentObject();
+                        }
+                        _placeMode = false;
+                        _currentTool = EditorFunctions.None;
+                        break;
+                    case "Grab":
+                        var overlap = Physics2D.OverlapPoint(transform.position);
+                        if (overlap) {
+                            transform.position = overlap.transform.position;
+                            overlap.transform.parent = _objectHolder.transform;
+                            _grabOrigin =
+                                Instantiate(overlap.transform, overlap.transform.position, overlap.transform.rotation)
+                                as Transform;
+                            if (_grabOrigin != null) _grabOrigin.gameObject.SetActive(false);
+                        }
+                        break;
+                }
+            };
+        }
 
-		public void OnGUI () {
-			btnTree.DrawButtonTree(btnTree.Position);
-		}
+        public void Update() {
+            XRayInput.Update();
 
-		public void RemoveCurrentObject () {
-			if (HasCurrentObject) {
-				var holded = ObjectHolder.transform.GetChild(0).gameObject;
-				Destroy(holded);
-			}
-		}
+            if (HasCurrentObject) {
+                // Scaling object
+                if (_currentTool == EditorFunctions.Scale || _currentTool == EditorFunctions.Scalex ||
+                    _currentTool == EditorFunctions.Scaley) {
+                    var diff = new Vector3(
+                        _currentTool == EditorFunctions.Scale || _currentTool == EditorFunctions.Scalex ? 0.05f : 0f,
+                        _currentTool == EditorFunctions.Scale || _currentTool == EditorFunctions.Scaley ? 0.05f : 0f);
+                    var newScale = new Vector3();
+                    if (Input.GetKey(KeyCode.KeypadPlus)) {
+                        newScale = CurrentObject.transform.localScale + diff;
+                    }
+                    else if (Input.GetKey(KeyCode.KeypadMinus)) {
+                        newScale = CurrentObject.transform.localScale - diff;
+                    }
+                    if (newScale.x > 0 && newScale.y > 0) {
+                        CurrentObject.transform.localScale = newScale;
+                    }
+                }
 
-		public void PlaceCurrentObject() {
-			if (HasCurrentObject) {
-				var holded = ObjectHolder.transform.GetChild(0).gameObject;
-				PlaceObject(holded);
-			}
-		}
+                if (_currentTool == EditorFunctions.Rotate) {
+                    var diff = new Vector3(0f, 0f, 1f);
+                    var rot = _objectHolder.transform.GetChild(0).rotation;
+                    if (Input.GetKey(KeyCode.KeypadPlus)) {
+                        CurrentObject.transform.rotation = Quaternion.Euler(rot.eulerAngles + diff);
+                    }
+                    else if (Input.GetKey(KeyCode.KeypadMinus)) {
+                        CurrentObject.transform.rotation = Quaternion.Euler(rot.eulerAngles - diff);
+                    }
+                }
+            }
 
-		public void PlaceObject(GameObject model) {
-			var placed = (GameObject) Instantiate(model, model.transform.position, model.transform.rotation);
-			placed.transform.parent = LevelHolder.transform;
-		}
+            // Cursor position
+            var h = Input.GetAxis("Horizontal");
+            var v = Input.GetAxis("Vertical");
+            var move = new Vector3(h*Speed, v*Speed, 0);
+            transform.position += move;
 
-		public bool DropCurrentObject() {
-			if (HasCurrentObject) {
-				var holded = ObjectHolder.transform.GetChild(0).gameObject;
-				holded.transform.parent = LevelHolder.transform;
-				return true;
-			}
-			return false;
-		}
-	}
+            // Buttons activation
+            _btnTree["Scale"].Active = HasCurrentObject;
+            _btnTree["Rotate"].Active = _btnTree["Place"].Active = _btnTree["Cancel"].Active = HasCurrentObject;
+            _btnTree["Copy"].Active = _btnTree["Delete"].Active = HasCurrentObject && !_placeMode;
+            _btnTree["Grab"].Active = !HasCurrentObject && !_placeMode && Physics2D.OverlapPoint(transform.position);
+
+            _btnTree.Update();
+            if ((Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Escape)) &&
+                !_btnTree.HasOneEnabledChild) {
+                _btnTree.DisableChilds();
+            }
+        }
+
+        public void OnGUI() {
+            _btnTree.DrawButtonTree(_btnTree.Position);
+        }
+
+        /// <summary>
+        /// Destroy the object contained into the cursor.
+        /// </summary>
+        public void RemoveCurrentObject() {
+            if (HasCurrentObject) {
+                Destroy(CurrentObject);
+            }
+        }
+
+        /// <summary>
+        /// Copy the object holded into the cursor to the level holder.
+        /// </summary>
+        public void PlaceCurrentObject() {
+            if (HasCurrentObject) {
+                PlaceObject(CurrentObject);
+            }
+        }
+
+        /// <summary>
+        /// Copy the given object to the level holder. 
+        /// </summary>
+        /// <param name="model">The object to copy.</param>
+        public void PlaceObject(GameObject model) {
+            var placed = (GameObject) Instantiate(model, model.transform.position, model.transform.rotation);
+            placed.name = model.name;
+            placed.transform.parent = _levelHolder.transform;
+        }
+
+        /// <summary>
+        /// Drop the object into the level holder.
+        /// </summary>
+        /// <returns></returns>
+        public void DropCurrentObject() {
+            if (!HasCurrentObject) return;
+            CurrentObject.transform.parent = _levelHolder.transform;
+            if (_grabOrigin != null)
+                Destroy(_grabOrigin.gameObject);
+        }
+    }
 }

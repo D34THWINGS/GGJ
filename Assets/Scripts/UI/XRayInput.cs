@@ -14,35 +14,42 @@ namespace XRay.UI
 
 	public static class XRayInput
 	{
-		private static Dictionary<XRayKeyCode, bool> keyLastState = new Dictionary<XRayKeyCode, bool>();
-		private static Dictionary<XRayKeyCode, bool> keyState = new Dictionary<XRayKeyCode, bool>();
+		private static Dictionary<XRayKeyCode, bool> _keyLastState = new Dictionary<XRayKeyCode, bool>();
+		private static readonly Dictionary<XRayKeyCode, bool> KeyState = new Dictionary<XRayKeyCode, bool>();
 
 		public static bool AnyKeyDown {
 			get {
-				return keyState.Any(code => keyLastState.ContainsKey(code.Key) && !keyLastState[code.Key] && code.Value);
+				return KeyState.Any(code => _keyLastState.ContainsKey(code.Key) && !_keyLastState[code.Key] && code.Value);
 			}
 		}
 
 		public static bool AnyKeyUp {
 			get {
-				return keyState.Any(code => keyLastState.ContainsKey(code.Key) && keyLastState[code.Key] && !code.Value);
+				return KeyState.Any(code => _keyLastState.ContainsKey(code.Key) && _keyLastState[code.Key] && !code.Value);
 			}
 		}
 
 		public static bool AnyKey {
 			get {
-				return keyState.Any(code => code.Value);
+				return KeyState.Any(code => code.Value);
+			}
+		}
+
+		public static Dictionary<XRayKeyCode, bool> LastKeyStates {
+			get {
+				var cpy = _keyLastState;
+				return cpy;
 			}
 		}
 
 		public static bool GetKeyDown(XRayKeyCode code) {
-			return keyLastState.ContainsKey(code) && !keyLastState[code] &&
-				keyState.ContainsKey(code) && keyState[code];
+			return _keyLastState.ContainsKey(code) && !_keyLastState[code] &&
+				KeyState.ContainsKey(code) && KeyState[code];
 		}
 
 		public static bool GetKeyUp(XRayKeyCode code) {
-			return keyLastState.ContainsKey(code) && keyLastState[code] &&
-				keyState.ContainsKey(code) && !keyState[code];
+			return _keyLastState.ContainsKey(code) && _keyLastState[code] &&
+				KeyState.ContainsKey(code) && !KeyState[code];
 		}
 
 		public static bool GetKey(XRayKeyCode code) {
@@ -50,16 +57,16 @@ namespace XRay.UI
 			
 			switch(code) {
 			case XRayKeyCode.JoystickLeftArrow:
-				test = Input.GetAxis("Arrows H") == -1f;
+				test = Input.GetAxis("Arrows H") <= -1f;
 				break;
 			case XRayKeyCode.JoystickRightArrow:
-				test = Input.GetAxis("Arrows H") == 1f;
-				break;
-			case XRayKeyCode.JoystickUpArrow:
-				test = Input.GetAxis("Arrows V") == -1f;
+				test = Input.GetAxis("Arrows H") >= 1f;
 				break;
 			case XRayKeyCode.JoystickDownArrow:
-				test = Input.GetAxis("Arrows V") == 1f;
+				test = Input.GetAxis("Arrows V") <= -1f;
+				break;
+			case XRayKeyCode.JoystickUpArrow:
+				test = Input.GetAxis("Arrows V") >= 1f;
 				break;
 			}
 			
@@ -67,12 +74,16 @@ namespace XRay.UI
 		}
 
 		public static void Update() {
-			keyLastState = keyState;
-			keyState.Clear();
+			_keyLastState = new Dictionary<XRayKeyCode, bool>(KeyState);
+			KeyState.Clear();
 			for (var i = XRayKeyCode.JoystickLeftArrow ; i != XRayKeyCode.JoystickDownArrow ; i++) {
-				keyState.Add(i, GetKey(i));
+				KeyState.Add(i, GetKey(i));
 			}
 		}
+
+        public static bool GetKeysDown(params KeyCode[] codes) {
+            return codes.All(Input.GetKey) && Input.GetKeyDown(codes.Last());
+        }
 	}
 }
 
