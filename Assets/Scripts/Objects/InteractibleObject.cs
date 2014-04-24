@@ -105,7 +105,7 @@ namespace XRay.Objects {
 					OnStateChange(InteractionEvent.RESHAPE, gameObject);
 				}
 			}
-			if(IsInvisible && StaticVariables.HasPower(StaticVariables.Powers.REVEAL)){
+			if(IsInvisible && StaticVariables.HasPower(StaticVariables.Powers.Reveal)){
 				GetComponent<Animator>().SetBool("Hidden", false);
 				gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 				
@@ -125,7 +125,7 @@ namespace XRay.Objects {
 						OnStateChange(InteractionEvent.RESURECT, gameObject);
 				}
 			}
-			if(IsWeightChangeable && StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT)){
+			if(IsWeightChangeable && StaticVariables.HasPower(StaticVariables.Powers.ChangeWeight)){
 				// Do nothing if the wieght hasn't change
 				if (rigidbody2D.mass == player.rigidbody2D.mass) return;
 				
