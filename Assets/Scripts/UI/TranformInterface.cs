@@ -63,42 +63,42 @@ namespace XRay.UI {
                             }
                         }
                     },
-                    new TransformButton("Material") {
-                        BtnTexture = BtnWeight,
-                        JoystickButton = KeyCode.JoystickButton5,
-                        KeyboardButton = KeyCode.R,
-                        Spacing = 50f,
-                        ChildButtons = new List<TransformButton> {
-                            new TransformButton("Normal") {
-                                BtnTexture = BtnLight,
-                                JoystickButton = KeyCode.JoystickButton1,
-                                KeyboardButton = KeyCode.Alpha1
-                            },
-                            new TransformButton("Glass") {
-                                BtnTexture = BtnHeavy,
-                                JoystickButton = KeyCode.JoystickButton2,
-                                KeyboardButton = KeyCode.Alpha2
-                            },
-                            new TransformButton("Rubber") {
-                                BtnTexture = BtnLight,
-                                JoystickButton = KeyCode.JoystickButton3,
-                                KeyboardButton = KeyCode.Alpha3
-                            },
-                            new TransformButton("Bouncy") {
-                                BtnTexture = BtnHeavy,
-                                JoystickButton = KeyCode.JoystickButton4,
-                                KeyboardButton = KeyCode.Alpha4
-                            }
-                        }
-                    }
+                    //new TransformButton("Material") {
+                    //    BtnTexture = BtnWeight,
+                    //    JoystickButton = KeyCode.JoystickButton5,
+                    //    KeyboardButton = KeyCode.R,
+                    //    Spacing = 50f,
+                    //    ChildButtons = new List<TransformButton> {
+                    //        new TransformButton("Normal") {
+                    //            BtnTexture = BtnLight,
+                    //            JoystickButton = KeyCode.JoystickButton1,
+                    //            KeyboardButton = KeyCode.Alpha1
+                    //        },
+                    //        new TransformButton("Glass") {
+                    //            BtnTexture = BtnHeavy,
+                    //            JoystickButton = KeyCode.JoystickButton2,
+                    //            KeyboardButton = KeyCode.Alpha2
+                    //        },
+                    //        new TransformButton("Rubber") {
+                    //            BtnTexture = BtnLight,
+                    //            JoystickButton = KeyCode.JoystickButton3,
+                    //            KeyboardButton = KeyCode.Alpha3
+                    //        },
+                    //        new TransformButton("Bouncy") {
+                    //            BtnTexture = BtnHeavy,
+                    //            JoystickButton = KeyCode.JoystickButton4,
+                    //            KeyboardButton = KeyCode.Alpha4
+                    //        }
+                    //    }
+                    //}
                 },
                 Spacing = 100f,
                 Enabled = true,
                 Position = new Vector2((float) Screen.width/2, Screen.height - 10)
-            }.Init("Game");
+            }.Init("GameButtons");
 
             // Bindings
-            _btnTree.OnPress += (buttonName) => {
+            _btnTree.OnPress += buttonName => {
                 print(buttonName);
                 switch (buttonName) {
                     case "Shape.Square":
@@ -140,9 +140,9 @@ namespace XRay.UI {
         public void Update() {
             _btnTree.Update();
 
-            _btnTree["Shape"].Active = StaticVariables.HasPower(StaticVariables.Powers.RESHAPE_CIRCLE);
-            _btnTree["Weight"].Active = StaticVariables.HasPower(StaticVariables.Powers.CHANGE_WEIGHT);
-            _btnTree["Material"].Active = StaticVariables.HasPower(StaticVariables.Powers.CHANGE_MATERIAL);
+            _btnTree["Shape"].Active = StaticVariables.HasPower(StaticVariables.Powers.ReshapeCircle);
+            _btnTree["Weight"].Active = StaticVariables.HasPower(StaticVariables.Powers.ChangeWeight);
+            //_btnTree["Material"].Active = StaticVariables.HasPower(StaticVariables.Powers.CHANGE_MATERIAL);
         }
 
         public void OnGUI() {

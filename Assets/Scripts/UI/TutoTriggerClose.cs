@@ -9,6 +9,6 @@ public class TutoTriggerClose : MonoBehaviour {
 		}
 		XRay.Save.SaveSystem.PassTuto += gameObject.transform.parent.gameObject.name.Replace("TutoPanel","")+";";
 		gameObject.transform.parent.gameObject.SetActive(false);
-		XRay.UI.StaticVariables.isOnTuto = false;
+		XRay.UI.StaticVariables.IsOnTuto = false;
 	}
 }

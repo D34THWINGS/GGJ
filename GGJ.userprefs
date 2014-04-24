@@ -9,7 +9,7 @@
       <File FileName="Assets\Scripts\Player\FollowMouse.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\UI\TransformButton.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\UI\TranformInterface.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\TutoTriggerClose.cs" Line="10" Column="2" />
+      <File FileName="Assets\Scripts\UI\TutoTriggerClose.cs" Line="8" Column="25" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
