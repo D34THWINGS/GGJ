@@ -9,6 +9,7 @@ namespace XRay.UI {
 			if(collider.name == "Player"){
 				StaticVariables.isOnTuto = true;
 				TutoPanel.SetActive(true);
+				this.gameObject.SetActive(false);
 			}
 		}
 	}
