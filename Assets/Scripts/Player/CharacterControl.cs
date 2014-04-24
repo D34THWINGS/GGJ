@@ -78,11 +78,11 @@ namespace XRay.Player {
 				}
 			}
 
-			if(IsGrounded) {
-				if(IsGrounded.transform.parent.transform.parent.name == "Elevator") {
+			/*if(IsGrounded) {
+				if(IsGrounded.transform.parent.transform.parent.name == "Elevator") {;
 					rigidbody2D.transform.position = new Vector2(IsGrounded.transform.parent.transform.position.x, rigidbody2D.transform.position.y);
 				}
-			}
+			}*/
 		}
 		
 		void Update () {
@@ -127,10 +127,6 @@ namespace XRay.Player {
 				// Cast die event
 				if (OnDie != null)
 					OnDie();
-			}
-
-			if(theCollision.transform.parent.transform.parent.name == "Elevator"){
-				OriginElevator = theCollision.transform.parent.transform.parent.rigidbody2D.transform;
 			}
 		}
 		
