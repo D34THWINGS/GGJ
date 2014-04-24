@@ -10,7 +10,6 @@ namespace XRay.Player {
         [HideInInspector] public Reshape Reshaper; // Public accessor/setter for reshping component
 
         public delegate void DieDelegate();
-
         public event DieDelegate OnDie;
 
         public float MoveForce = 365f; // Amount of force added to move the player left and right.
