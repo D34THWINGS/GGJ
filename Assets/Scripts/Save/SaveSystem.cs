@@ -31,6 +31,15 @@ namespace XRay.Save {
 			}
 		}
 
+		public static string PassTuto{
+			get{
+				return PlayerPrefs.GetString("passTuto");
+			}
+			set{
+				PlayerPrefs.SetString("passTuto", value);
+			}
+		}
+
 	}
 
 }

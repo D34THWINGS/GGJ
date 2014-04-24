@@ -6,7 +6,16 @@ namespace XRay.UI {
 		public GameObject TutoPanel;
 
 		public void OnTriggerEnter2D(Collider2D collider){
-			if(collider.name == "Player"){
+
+			string[] passTutoList = XRay.Save.SaveSystem.PassTuto.Split(';');
+			bool test = false;
+			foreach(string passTutoString in passTutoList){
+				if(gameObject.name.Replace("TutoTrigger","") == passTutoString){
+					test = true;
+				}
+			}
+
+			if(collider.name == "Player" && !test){
 				StaticVariables.isOnTuto = true;
 				TutoPanel.SetActive(true);
 				this.gameObject.SetActive(false);

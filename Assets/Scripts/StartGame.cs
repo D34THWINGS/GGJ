@@ -17,6 +17,9 @@ namespace XRay {
 			if(SaveSystem.CurrentLevel == 0){
 				GameObject.Find("Continue").collider.isTrigger = false;
 			}
+			if(!PlayerPrefs.HasKey("passTuto")){
+				SaveSystem.PassTuto = "";
+			}
 		}
 		
 		// Update is called once per frame
@@ -29,6 +32,7 @@ namespace XRay {
 				print ("NewGame");
 				SaveSystem.BestLevel = 1;
 				SaveSystem.CurrentLevel = 1;
+				SaveSystem.PassTuto = "";
 				Application.LoadLevel(1);
 			}else if(gameObject.name == "Continue"){
 				print ("Continue");
