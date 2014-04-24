@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using System.Collections;
 using XRay.UI;
 
-namespace XRay.LevelEditor {
-    public enum XRayObjects {
-        Interactible,
-        Ground
-    }
+namespace XRay.Editor {
+    public class LevelEditor : MonoBehaviour {
+        public enum XRayObjects {
+            Interactible,
+            Ground
+        }
 
-    public enum EditorFunctions {
-        None,
-        Scalex,
-        Scaley,
-        Scale,
-        Rotate
-    }
+        public enum EditorFunctions {
+            None,
+            Scalex,
+            Scaley,
+            Scale,
+            Rotate
+        }
 
-    public class Cursor : MonoBehaviour {
         public float Speed = 0.2f;
         public GameObject MainCamera;
         public GameObject Player;
@@ -208,7 +207,7 @@ namespace XRay.LevelEditor {
                 // Scaling object
                 if (_currentTool == EditorFunctions.Scale) {
                     if (Input.GetKeyDown(KeyCode.JoystickButton4)) {
-                        CurrentObject.transform.localScale = RoundToClosestHalf(CurrentObject.transform.localScale);
+                        CurrentObject.transform.localScale = RoundToClosestHalf(CurrentObject.transform.localScale, 0.5f);
                         StartCoroutine(LoopWithWait(() => {
                             var val = GetRightStick();
                             ScaleCurrentObject(val.x*0.5f, -val.y*0.5f);
@@ -363,13 +362,12 @@ namespace XRay.LevelEditor {
         /// <param name="number">Number to round.</param>
         /// <param name="half">The rounding unit.</param>
         /// <returns>Rounded number.</returns>
-        private static float RoundToClosestHalf(float number, float half = 0.5f) {
-            return (float)Math.Round(number * (1f / half), MidpointRounding.AwayFromZero) / (1f / half);
+        private static float RoundToClosestHalf(float number, float half) {
+            return (float) Math.Round(number*(1f/half), MidpointRounding.AwayFromZero)/(1f/half);
         }
 
-        private static Vector2 RoundToClosestHalf(Vector2 vector, float half = 2f)
-        {
-            return new Vector2(RoundToClosestHalf(vector.x), RoundToClosestHalf(vector.y));
+        private static Vector2 RoundToClosestHalf(Vector2 vector, float half) {
+            return new Vector2(RoundToClosestHalf(vector.x, half), RoundToClosestHalf(vector.y, half));
         }
 
         private IEnumerator WaitStartButton() {
