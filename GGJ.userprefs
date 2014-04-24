@@ -1,20 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Objects\InteractibleObject.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Mechanics\Triggered\Door.cs">
     <Files>
-      <File FileName="Assets\Scripts\Objects\InteractibleObject.cs" Line="193" Column="1" />
-      <File FileName="Assets\Scripts\UI\TransformButton.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\TutoTrigger.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\StaticVariables.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Player\CharacterControl.cs" Line="154" Column="2" />
-      <File FileName="Assets\Scripts\Player\FollowMouse.cs" Line="49" Column="1" />
-      <File FileName="Assets\Scripts\UI\TranformInterface.cs" Line="152" Column="2" />
-      <File FileName="Assets\Scripts\UI\TutoTriggerClose.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ChangeLevel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Save\SaveSystem.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\StartGame.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelSelection\OnCLickLevel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Objects\InteractibleObject.cs" Line="79" Column="5" />
+      <File FileName="Assets\Scripts\Objects\Reshape.cs" Line="37" Column="13" />
+      <File FileName="Assets\Scripts\Objects\InteractibleObject.cs" Line="78" Column="24" />
+      <File FileName="Assets\Scripts\Objects\InteractionManager.cs" Line="27" Column="74" />
+      <File FileName="Assets\Scripts\Mechanics\Triggering\CombinaisonController.cs" Line="80" Column="1" />
+      <File FileName="Assets\Scripts\Mechanics\Triggered\Door.cs" Line="45" Column="11" />
+      <File FileName="Assets\Scripts\Mechanics\TriggerListener.cs" Line="14" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

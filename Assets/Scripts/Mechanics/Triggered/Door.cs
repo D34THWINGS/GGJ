@@ -9,6 +9,7 @@ namespace XRay.Mechanics.Triggered {
 		public Transform Target;
 		public float Speed = 2f;
 		public bool IsOpened = false;
+		public bool keepOpened = false;
 		
 		[HideInInspector]
 		public GameObject Origin;
@@ -39,7 +40,8 @@ namespace XRay.Mechanics.Triggered {
 				IsOpened = true;
 				break;
 			case TriggeringMechanism.EventNames.DISABLE:
-				IsOpened = false;
+				if(!keepOpened)
+					IsOpened = false;
 				break;
 			default:
 				break;
