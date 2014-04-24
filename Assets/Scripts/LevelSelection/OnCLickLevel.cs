@@ -15,6 +15,6 @@ public class OnCLickLevel : MonoBehaviour {
 	}
 
 	void OnClick(){
-		Application.LoadLevel(Int32.Parse(gameObject.name.Substring(gameObject.name.Length-1, 1))+1);
+		Application.LoadLevel(Int32.Parse(gameObject.name.Substring(gameObject.name.Length-1, 1)));
 	}
 }

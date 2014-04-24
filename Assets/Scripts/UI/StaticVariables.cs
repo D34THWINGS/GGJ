@@ -29,5 +29,7 @@ namespace XRay.UI {
         public static void AddPower(Powers power) {
             EnabledPowers.Add(power);
         }
+
+		public static bool isOnTuto = false;
     }
 }
