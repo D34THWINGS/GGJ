@@ -78,6 +78,9 @@ namespace XRay.Objects {
 				rigidbody2D.mass = IsHeavy ? StaticVariables.HeavyWeight : StaticVariables.LightWeight;
 			}
 			timerElapsed = false;
+			if(Type == InteractionType.INSTANT){
+				gameObject.GetComponent<SpriteRenderer>().color =new Color(1,0,0);
+			}
 		}
 		
 		// Update is called once per frame
