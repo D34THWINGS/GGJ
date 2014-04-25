@@ -22,6 +22,7 @@ namespace XRay.Editor {
         public float Speed = 0.2f;
         public GameObject MainCamera;
         public GameObject Player;
+        public TranformInterface TUI;
 
         private XRayObjects _selectedObjectType = XRayObjects.Ground;
         private GameObject _objectHolder;
@@ -36,6 +37,7 @@ namespace XRay.Editor {
         private GameObject _crosshair;
         private bool _looper;
         private GUIText _pressLB;
+        private GameObject _spawn;
 
         private delegate void LoopDelegate();
 
@@ -70,6 +72,7 @@ namespace XRay.Editor {
             _cursorCamera = GameObject.Find("CursorCamera").GetComponent<Camera>();
             _crosshair = GameObject.Find("Crosshair");
             _pressLB = GameObject.Find("PressLB").GetComponent<GUIText>();
+            _spawn = GameObject.Find("PlayerSpawnPoint");
 
             // Disable player and it's camera
             MainCamera.SetActive(false);
@@ -86,15 +89,16 @@ namespace XRay.Editor {
                         Active = true,
                         Spacing = 5f,
                         ButtonTrigger =
-                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button4, KeyCode.Joystick1Button0),
+                            () => XRayInput.GetKeysDown(KeyCode.JoystickButton4, KeyCode.JoystickButton0),
                         ChildButtons = new List<TransformButton> {
                             new TransformButton("Interactible") {
-                                ButtonTrigger =
-                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow))
+                                ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickLeftArrow))
                             },
                             new TransformButton("Prefab") {
-                                ButtonTrigger =
-                                    () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow))
+                                ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickRightArrow))
+                            },
+                            new TransformButton("Spawn") {
+                                ButtonTrigger = () => (XRayInput.GetKeyDown(XRayKeyCode.JoystickUpArrow))
                             }
                         }
                     },
@@ -109,12 +113,10 @@ namespace XRay.Editor {
                     },
                     new TransformButton("Copy") {
                         KeyboardButton = KeyCode.C,
-                        ButtonTrigger =
-                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button5, KeyCode.Joystick1Button0)
+                        ButtonTrigger = () => XRayInput.GetKeysDown(KeyCode.JoystickButton5, KeyCode.JoystickButton0)
                     },
                     new TransformButton("Delete") {
-                        ButtonTrigger =
-                            () => XRayInput.GetKeysDown(KeyCode.Joystick1Button5, KeyCode.Joystick1Button1),
+                        ButtonTrigger = () => XRayInput.GetKeysDown(KeyCode.JoystickButton5, KeyCode.JoystickButton1),
                         KeyboardButton = KeyCode.Delete
                     },
                     new TransformButton("Place") {
@@ -122,7 +124,7 @@ namespace XRay.Editor {
                         KeyboardButton = KeyCode.Space
                     },
                     new TransformButton("Cancel") {
-                        JoystickButton = KeyCode.Joystick1Button1,
+                        JoystickButton = KeyCode.JoystickButton1,
                         KeyboardButton = KeyCode.Escape
                     },
                     new TransformButton("Grab") {
@@ -144,6 +146,10 @@ namespace XRay.Editor {
                             Instantiate(interactiveObject, transform.position, new Quaternion()) as GameObject;
                         _placeMode = true;
                         break;
+                    case "Shape.Spawn":
+                        DropCurrentObject();
+                        GrabObject(_spawn);
+                        break;
                     case "Scale":
                         _currentTool = EditorFunctions.Scale;
                         break;
@@ -152,7 +158,8 @@ namespace XRay.Editor {
                         break;
                     case "Copy":
                         if (HasCurrentObject) {
-                            Destroy(_grabOrigin);
+                            if (_grabOrigin != null)
+                                Destroy(_grabOrigin.gameObject);
                             PlaceCurrentObject();
                             _placeMode = true;
                         }
@@ -182,12 +189,7 @@ namespace XRay.Editor {
                     case "Grab":
                         var overlap = Physics2D.OverlapPoint(transform.position);
                         if (overlap) {
-                            transform.position = overlap.transform.position;
-                            overlap.transform.parent = _objectHolder.transform;
-                            _grabOrigin =
-                                Instantiate(overlap.transform, overlap.transform.position, overlap.transform.rotation)
-                                as Transform;
-                            if (_grabOrigin != null) _grabOrigin.gameObject.SetActive(false);
+                            GrabObject(overlap.gameObject);
                         }
                         break;
                 }
@@ -209,7 +211,7 @@ namespace XRay.Editor {
                     if (Input.GetKeyDown(KeyCode.JoystickButton4)) {
                         CurrentObject.transform.localScale = RoundToClosestHalf(CurrentObject.transform.localScale, 0.5f);
                         StartCoroutine(LoopWithWait(() => {
-                            var val = GetRightStick();
+                            var val = XRayInput.GetRightStick();
                             ScaleCurrentObject(val.x*0.5f, -val.y*0.5f);
                         }, 50));
                     }
@@ -217,7 +219,7 @@ namespace XRay.Editor {
                         _looper = false;
                     }
                     if (!Input.GetKey(KeyCode.JoystickButton4)) {
-                        var val = GetRightStick();
+                        var val = XRayInput.GetRightStick();
                         ScaleCurrentObject(new Vector3(val.x*0.2f, -val.y*0.2f));
                     }
                 }
@@ -225,8 +227,9 @@ namespace XRay.Editor {
                 // Rotate object
                 if (_currentTool == EditorFunctions.Rotate) {
                     if (Input.GetKeyDown(KeyCode.JoystickButton4)) {
+                        CurrentObject.transform.rotation = Quaternion.Euler(RoundToClosestHalf(CurrentObject.transform.rotation.eulerAngles, 22.5f));
                         StartCoroutine(LoopWithWait(() => {
-                            var val = GetRightStick();
+                            var val = XRayInput.GetRightStick();
                             RotateCurrentObject(val.x*22.5f);
                         }, 100));
                     }
@@ -234,7 +237,7 @@ namespace XRay.Editor {
                         _looper = false;
                     }
                     if (!Input.GetKey(KeyCode.JoystickButton4)) {
-                        var val = GetRightStick();
+                        var val = XRayInput.GetRightStick();
                         RotateCurrentObject(val.x*1f);
                     }
                 }
@@ -264,22 +267,18 @@ namespace XRay.Editor {
             _btnTree.Update();
 
             // Click escape or B button will close all branches of the button tree
-            if ((Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Escape)) &&
+            if ((Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Escape)) &&
                 !_btnTree.HasOneEnabledChild) {
                 _btnTree.DisableChilds();
             }
 
+            // Blink spawn point
+            var sr = _spawn.GetComponent<SpriteRenderer>();
+            sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, Mathf.Sin(Time.time*3f)/4f + 0.75f);
+
             // Test mode
             if (!Input.GetKeyDown(KeyCode.JoystickButton7) && !Input.GetKeyDown(KeyCode.Return)) return;
-            enabled = false;
-            _crosshair.SetActive(false);
-            MainCamera.SetActive(true);
-            Player.SetActive(true);
-            var cpy = Instantiate(_levelHolder) as GameObject;
-            if (cpy != null) cpy.name = "LevelCopy";
-            _levelHolder.SetActive(false);
-            GameObject.Find("PressStart").GetComponent<GUIText>().text = "Press start to end the test";
-            StartCoroutine(WaitStartButton());
+            StartTestMode();
         }
 
         public void OnGUI() {
@@ -326,6 +325,20 @@ namespace XRay.Editor {
         }
 
         /// <summary>
+        /// Grabs the given object.
+        /// </summary>
+        /// <param name="grabbed">The object to grab.</param>
+        public void GrabObject(GameObject grabbed) {
+            if (HasCurrentObject) return;
+            transform.position = grabbed.transform.position;
+            grabbed.transform.parent = _objectHolder.transform;
+            _grabOrigin =
+                Instantiate(gameObject.transform, grabbed.transform.position, grabbed.transform.rotation)
+                as Transform;
+            if (_grabOrigin != null) _grabOrigin.gameObject.SetActive(false);
+        }
+
+        /// <summary>
         /// Adds the given values to the localScale of the current object.
         /// </summary>
         /// <param name="x">X value to add.</param>
@@ -346,6 +359,10 @@ namespace XRay.Editor {
             ScaleCurrentObject(diff.x, diff.y);
         }
 
+        /// <summary>
+        /// Rotates the current object.
+        /// </summary>
+        /// <param name="diff">The angle in degrees to add to the current angle.</param>
         private void RotateCurrentObject(float diff) {
             if (!HasCurrentObject) return;
             var newAngle = CurrentObject.transform.rotation.eulerAngles.z + diff;
@@ -357,7 +374,7 @@ namespace XRay.Editor {
         }
 
         /// <summary>
-        /// Return the rounding of the given number to the closest .5f.
+        /// Returns the rounding of the given number to the closest given half.
         /// </summary>
         /// <param name="number">Number to round.</param>
         /// <param name="half">The rounding unit.</param>
@@ -366,11 +383,39 @@ namespace XRay.Editor {
             return (float) Math.Round(number*(1f/half), MidpointRounding.AwayFromZero)/(1f/half);
         }
 
+        /// <summary>
+        /// Returns the rounding of both axis of the given Vector to the closest given half.
+        /// </summary>
+        /// <param name="vector">Vector to round.</param>
+        /// <param name="half">The rounding unit.</param>
+        /// <returns>Rounded number.</returns>
         private static Vector2 RoundToClosestHalf(Vector2 vector, float half) {
             return new Vector2(RoundToClosestHalf(vector.x, half), RoundToClosestHalf(vector.y, half));
         }
 
-        private IEnumerator WaitStartButton() {
+        /// <summary>
+        /// Enables the test mode of the level.
+        /// </summary>
+        private void StartTestMode() {
+            enabled = false;
+            _crosshair.SetActive(false);
+            MainCamera.SetActive(true);
+            Player.SetActive(true);
+            Player.transform.position = _spawn.transform.position;
+            _spawn.SetActive(false);
+            TUI.enabled = true;
+            var cpy = Instantiate(_levelHolder) as GameObject;
+            if (cpy != null) cpy.name = "LevelCopy";
+            _levelHolder.SetActive(false);
+            GameObject.Find("PressStart").GetComponent<GUIText>().text = "Press start to end the test";
+            StartCoroutine(EndTestMode());
+        }
+
+        /// <summary>
+        /// Waits for the player to press the start button and end the test mode.
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator EndTestMode() {
             do {
                 yield return 0;
             } while (!Input.GetKeyDown(KeyCode.JoystickButton7) && !Input.GetKeyDown(KeyCode.Return));
@@ -380,26 +425,24 @@ namespace XRay.Editor {
             _crosshair.SetActive(true);
             Player.SetActive(false);
             MainCamera.SetActive(false);
+            _spawn.SetActive(true);
+            TUI.enabled = false;
             GameObject.Find("PressStart").GetComponent<GUIText>().text = "Press start to test your level";
             enabled = true;
         }
 
+        /// <summary>
+        /// Executes the given callback every [waitTime] seconds until _looper is set to false. 
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="waitTime"></param>
+        /// <returns></returns>
         private IEnumerator LoopWithWait(LoopDelegate callback, float waitTime) {
             _looper = true;
             while (_looper) {
                 callback();
                 yield return new WaitForSeconds(waitTime/1000);
             }
-        }
-
-        private Vector2 GetRightStick() {
-            return new Vector2(
-                Mathf.Round(!Input.GetAxis("Joy X").Equals(0f)
-                                ? Input.GetAxis("Joy X")
-                                : Input.GetAxis("PlusMinus")),
-                Mathf.Round(!Input.GetAxis("Joy Y").Equals(0f)
-                                ? Input.GetAxis("Joy Y")
-                                : Input.GetAxis("PlusMinus")));
         }
     }
 }

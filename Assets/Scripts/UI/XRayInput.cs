@@ -90,5 +90,20 @@ namespace XRay.UI {
         public static bool GetKeysDown(params KeyCode[] codes) {
             return codes.All(Input.GetKey) && Input.GetKeyDown(codes.Last());
         }
+
+        /// <summary>
+        /// Returns a Vector with both axis of the right stick.
+        /// </summary>
+        /// <returns></returns>
+        public static Vector2 GetRightStick()
+        {
+            return new Vector2(
+                Mathf.Round(!Input.GetAxis("Joy X").Equals(0f)
+                                ? Input.GetAxis("Joy X")
+                                : Input.GetAxis("PlusMinus")),
+                Mathf.Round(!Input.GetAxis("Joy Y").Equals(0f)
+                                ? Input.GetAxis("Joy Y")
+                                : Input.GetAxis("PlusMinus")));
+        }
     }
 }
