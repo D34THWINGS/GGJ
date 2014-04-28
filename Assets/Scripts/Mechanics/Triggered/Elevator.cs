@@ -12,38 +12,51 @@ namespace XRay.Mechanics.Triggered {
 		public float journeyLength = 3f;
 		public int timeStop;
 
-		private float startTime;
-		private bool freez;
+		private float elapsed;
+		private bool freeze;
 		private bool checkContact;
+		private bool reverted;
+		private Transform _target;
 		
 		protected override void Start() {
 			base.Start();
 			transform.position = Origin.position;
-			startTime = Time.time;
-			freez = false;
+			freeze = false;
 			timeStop = timeStop * 1000;
 			checkContact = false;
+			_target = Target;
+			reverted = false;
 		}
 		
 		// Update is called once per frame
 		void FixedUpdate () {
-			if(Started && !freez) {				
+			if(Started && !freeze) {
+				ChangeLimit(true);
+				UpdatePosition();
 
-				float distCovered = (Time.time - startTime) * Speed;
-				float fracJourney = distCovered / journeyLength;
-				transform.position = Vector3.Lerp(Origin.position, Target.position, fracJourney);
-
-				if (transform.position == Target.position) {
-					StartCoroutine(RevertWait(timeStop));
+				if (Vector2.Distance(transform.position, _target.position) < 0.01f) {
+					StartCoroutine(ElevatorWait(timeStop));
 				}
+			} else {
+				ChangeLimit(false);
 			}
+		}
+
+		public void UpdatePosition () {
+			var a = -(Mathf.Cos(elapsed * Speed) / 2) + 0.5f;
+			transform.position = new Vector2(
+				Origin.position.x + a * (Target.position.x - Origin.position.x),
+				Origin.position.y + a * (Target.position.y - Origin.position.y));
+			elapsed += Time.deltaTime;
 		}
 		
 		public void Revert() {
-			startTime = Time.time;
-			var target = Target;
-			Target = Origin;
-			Origin = target;
+			print ("Revert!");
+			if (reverted)
+				_target = Target;
+			else
+				_target = Origin;
+			reverted = !reverted;
 		}
 		
 		protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
@@ -54,20 +67,24 @@ namespace XRay.Mechanics.Triggered {
 				break;
 			case TriggeringMechanism.EventNames.DISABLE:
 				Started = false;
-				rigidbody2D.velocity = Vector2.zero;
 				break;
 			default:
 				break;
 			}
 		}
 
-		private IEnumerator RevertWait(float waitTime) {		
+		private IEnumerator ElevatorWait(float waitTime) {		
 			// Wait for respawn time
 
-			freez = true;
+			freeze = true;
+			Revert ();
 			yield return new WaitForSeconds(waitTime / 1000);
-			Revert();
-			freez = false;
+			freeze = false;
+		}
+
+		private void ChangeLimit (bool check) {
+			GameObject.Find("LimitLeft").collider2D.enabled = check;
+			GameObject.Find("LimitRight").collider2D.enabled = check;
 		}
 	}
 }
