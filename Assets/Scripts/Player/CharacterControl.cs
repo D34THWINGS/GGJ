@@ -69,13 +69,6 @@ namespace XRay.Player {
                     Cone.SetActive(true);
                 }
             }
-
-            if (!IsGrounded) return;
-            var elevator = GetParent(GetParent(IsGrounded.gameObject));
-            if (elevator != null && elevator.name == "Elevator") {
-                rigidbody2D.transform.position = new Vector2(IsGrounded.transform.parent.transform.position.x,
-                                                             rigidbody2D.transform.position.y);
-            }
         }
 
         public void Update() {
