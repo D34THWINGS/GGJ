@@ -33,7 +33,7 @@ namespace XRay.Player {
         }
 
         public void FixedUpdate() {
-            if (!StaticVariables.IsOnTuto) {
+            if (!StaticVariables.CantMove) {
                 // Cache the horizontal input.
                 var h = Input.GetAxis("Horizontal");
 
@@ -72,7 +72,7 @@ namespace XRay.Player {
         }
 
         public void Update() {
-            if (StaticVariables.IsOnTuto) return;
+			if (StaticVariables.CantMove) return;
 
             // The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
             IsGrounded = Physics2D.OverlapArea(

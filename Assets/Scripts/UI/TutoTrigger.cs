@@ -15,7 +15,7 @@ namespace XRay.UI {
 			}
 
 			if(collider.name == "Player" && !test){
-				StaticVariables.isOnTuto = true;
+				StaticVariables.CantMove = true;
 				TutoPanel.SetActive(true);
 				this.gameObject.SetActive(false);
 			}

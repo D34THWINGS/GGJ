@@ -18,7 +18,7 @@ namespace XRay.Player {
 		
 		// Update is called once per frame
 		public void Update () {
-		    if (StaticVariables.IsOnTuto) return;
+			if (StaticVariables.CantMove) return;
 		    transform.position = _player.transform.position;
 		    if(!Input.GetAxis("Joy X").Equals(0f) || !Input.GetAxis("Joy Y").Equals(0f)) {
 		        _usingController = true;

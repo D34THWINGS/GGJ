@@ -20,7 +20,7 @@ namespace XRay.UI {
 
         public static float LightWeight = 1.2f;
         public static float HeavyWeight = 3f;
-        public static bool IsOnTuto = false;
+		public static bool CantMove = false;
 
         public static bool HasPower(Powers power) {
             return EnabledPowers.Contains(power);
