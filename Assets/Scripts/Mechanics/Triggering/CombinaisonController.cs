@@ -6,7 +6,10 @@ using XRay.Objects;
 namespace XRay.Mechanics.Triggering {
 
 	public class CombinaisonController : TriggeringMechanism {
-		
+
+		public GameObject ValidationLightContainer;
+		public GameObject ValidationLight;
+
 		public Transform Spawn;
 		public GameObject SpawnedObject;
 		public float SpawnInterval = 5000f;
@@ -23,17 +26,29 @@ namespace XRay.Mechanics.Triggering {
 				enabled = value;
 			}
 		}
-		
+
+		private List<CombinaisonValidationLight> CombinaisonValidationLightList;
 		private int nbOfValid = 0;
 		private Timer timer;
 		private bool pop = false;
-		
+
+		void Awake(){
+			CombinaisonValidationLightList = new List<CombinaisonValidationLight>();
+		}
+
 		void Start() {
 			if (Spawn == null)
 				throw new UnityException("This component needs the spawn to be setted");
 			if (SpawnedObject == null)
 				throw new UnityException("This component needs the spawned object to be setted");
-			
+
+			for(int i=0; i<Combinaison.Count;i++){
+				GameObject go = (GameObject)GameObject.Instantiate(ValidationLight);
+				go.transform.parent = ValidationLightContainer.transform;
+				go.transform.localPosition = new Vector3(0+i*2,0,0);
+				CombinaisonValidationLightList.Add(go.GetComponent<CombinaisonValidationLight>());
+			}
+
 			timer = new Timer(SpawnInterval);
 			timer.Elapsed += (sender, e) => {
 				pop = true;
@@ -65,6 +80,7 @@ namespace XRay.Mechanics.Triggering {
 				Destroy(collider.gameObject);
 				particleSystem.Play();
 			} else {
+				CombinaisonValidationLightList[nbOfValid].ChangeLight();
 				nbOfValid++;
 				Destroy(collider.gameObject.GetComponent<InteractibleObject>());
 			}
