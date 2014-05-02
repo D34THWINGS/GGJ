@@ -33,18 +33,15 @@ namespace XRay.Mechanics.Triggered {
 			}
 		}
 		
-		protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
+		protected override void TriggerAction (bool trigger)
 		{
-			switch(eventName) {
-			case TriggeringMechanism.EventNames.ENABLE:
+			if(trigger) {
 				IsOpened = true;
-				break;
-			case TriggeringMechanism.EventNames.DISABLE:
-				if(!keepOpened)
+			}
+			else {
+				if(!keepOpened){
 					IsOpened = false;
-				break;
-			default:
-				break;
+				}
 			}
 		}
 	}

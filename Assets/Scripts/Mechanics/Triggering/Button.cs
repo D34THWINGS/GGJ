@@ -10,13 +10,13 @@ namespace XRay.Mechanics.Triggering {
 		
 		void OnCollisionEnter2D(Collision2D theCollision) {
 			if(theCollision.gameObject.name == "ButtonTrigger") {
-				Trigger(OnPressEvent);
+				Trigger(OnPressEvent, name);
 			}
 		}
 		
 		void OnCollisionExit2D(Collision2D theCollision) {
 			if(theCollision.gameObject.name == "ButtonTrigger") {
-				Trigger(OnReleaseEvent);
+				Trigger(OnReleaseEvent, name);
 			}
 		}
 	}

@@ -59,17 +59,13 @@ namespace XRay.Mechanics.Triggered {
 			reverted = !reverted;
 		}
 		
-		protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
+		protected override void TriggerAction (bool trigger)
 		{
-			switch(eventName) {
-			case TriggeringMechanism.EventNames.ENABLE:
+			if(trigger) {
 				Started = true;
-				break;
-			case TriggeringMechanism.EventNames.DISABLE:
+			}
+			else {
 				Started = false;
-				break;
-			default:
-				break;
 			}
 		}
 
