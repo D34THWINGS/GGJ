@@ -30,15 +30,19 @@ namespace XRay.Mechanics {
 				inverter = TriggeringMechanism.EventNames.DISABLE;
 				setValidTrigger(nb, 0);
 			}
-			else {
-				setValidTrigger(nb, 1);
-			}
+
 			if (RevertedTrigger && eventName == TriggeringMechanism.EventNames.DISABLE) {
 				inverter = TriggeringMechanism.EventNames.ENABLE;
 				setValidTrigger(nb, 1);
 			}
-			else {
-				setValidTrigger(nb, 0);
+
+			if(!RevertedTrigger) {
+				if(inverter == TriggeringMechanism.EventNames.ENABLE) {
+					setValidTrigger(nb, 1);
+				}
+				else {
+					setValidTrigger(nb, 0);
+				}
 			}
 
 			TriggerAction(checkValidTrigger());
