@@ -10,6 +10,7 @@ namespace XRay.Mechanics.Triggering {
 		public GameObject ValidationLightContainer;
 		public GameObject ValidationLight;
 
+		public bool useSpawn = true;
 		public Transform Spawn;
 		public GameObject SpawnedObject;
 		public float SpawnInterval = 5000f;
@@ -37,18 +38,18 @@ namespace XRay.Mechanics.Triggering {
 		}
 
 		void Start() {
-			if (Spawn == null)
-				throw new UnityException("This component needs the spawn to be setted");
-			if (SpawnedObject == null)
-				throw new UnityException("This component needs the spawned object to be setted");
-
 			for(int i=0; i<Combinaison.Count;i++){
 				GameObject go = (GameObject)GameObject.Instantiate(ValidationLight);
 				go.transform.parent = ValidationLightContainer.transform;
 				go.transform.localPosition = new Vector3(0+i*2,0,0);
 				CombinaisonValidationLightList.Add(go.GetComponent<CombinaisonValidationLight>());
 			}
-
+			if(useSpawn){
+				if (Spawn == null)
+					throw new UnityException("This component needs the spawn to be setted");
+				if (SpawnedObject == null)
+					throw new UnityException("This component needs the spawned object to be setted");
+			}
 			timer = new Timer(SpawnInterval);
 			timer.Elapsed += (sender, e) => {
 				pop = true;
@@ -59,7 +60,7 @@ namespace XRay.Mechanics.Triggering {
 		
 		void Update() {
 			// Spawn a random shape
-			if (pop) {
+			if (pop && useSpawn) {
 				GameObject spawned = (GameObject) Instantiate(SpawnedObject);
 				spawned.name = "Digit" + nbOfValid + 1;
 				spawned.transform.position = Spawn.position;
