@@ -17,6 +17,7 @@ namespace XRay.Mechanics.Triggered {
 		private bool checkContact;
 		private bool reverted;
 		private Transform _target;
+		private LineRenderer path;
 		
 		protected override void Start() {
 			base.Start();
@@ -26,10 +27,12 @@ namespace XRay.Mechanics.Triggered {
 			checkContact = false;
 			_target = Target;
 			reverted = false;
+			path = gameObject.GetComponentInChildren<LineRenderer>();
 		}
 		
 		// Update is called once per frame
 		void FixedUpdate () {
+			showPath();
 			if(Started && !freeze) {
 				ChangeLimit(true);
 				UpdatePosition();
@@ -81,6 +84,14 @@ namespace XRay.Mechanics.Triggered {
 		private void ChangeLimit (bool check) {
 			GameObject.Find("LimitLeft").collider2D.enabled = check;
 			GameObject.Find("LimitRight").collider2D.enabled = check;
+		}
+
+		private void showPath() {
+			var z = new Vector3(0,0,3f);
+			path.SetPosition(0, Origin.position + z);
+			var dir = Target.position - Origin.position;
+			var ray = Physics2D.Raycast(Origin.position, dir);
+			path.SetPosition(1, Origin.position + dir + z);
 		}
 	}
 }
