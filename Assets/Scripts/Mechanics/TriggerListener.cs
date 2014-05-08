@@ -47,7 +47,6 @@ namespace XRay.Mechanics {
 
 			TriggerAction(checkValidTrigger());
 		}
-
 		protected abstract void TriggerAction (bool trigger);
 
 		protected void setValidTrigger (int index, int value) {
@@ -69,6 +68,12 @@ namespace XRay.Mechanics {
 			}
 			else {
 				return false;
+			}
+		}
+
+		public void resetTrigger () {
+			for(int i = 0; i < _nbOfValid.Count; i++) {
+				setValidTrigger(i,0);
 			}
 		}
 	}
