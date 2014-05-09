@@ -79,19 +79,23 @@ namespace XRay.Mechanics.Triggering {
 			if (resh == null) return;
 			
 			if (nbOfValid == Combinaison.Count || resh.CurrentShape != Combinaison[nbOfValid]){ 
-				Destroy(collider.gameObject);
+				//Destroy(collider.gameObject);
 				if(ResetOnError){
 					nbOfValid = 0;
 					foreach(CombinaisonValidationLight light in CombinaisonValidationLightList){
 						if(light.isOn)
 							light.ChangeLight();
 					}
+					gameObject.GetComponent<ResetTriggered>().Reset();
+				}else{
+					Destroy(collider.gameObject);
 				}
 				particleSystem.Play();
 			} else {
 				CombinaisonValidationLightList[nbOfValid].ChangeLight();
 				nbOfValid++;
-				Destroy(collider.gameObject.GetComponent<InteractibleObject>());
+				if(!ResetOnError)
+					Destroy(collider.gameObject.GetComponent<InteractibleObject>());
 			}
 			
 			if (nbOfValid == Combinaison.Count) {
