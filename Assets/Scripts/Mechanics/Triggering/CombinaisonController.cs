@@ -15,7 +15,6 @@ namespace XRay.Mechanics.Triggering {
 		public GameObject SpawnedObject;
 		public float SpawnInterval = 5000f;
 		public List<int> Combinaison;
-		public bool ResetOnError = false;
 		public bool Enabled {
 			get {
 				return enabled;
@@ -80,13 +79,6 @@ namespace XRay.Mechanics.Triggering {
 			
 			if (nbOfValid == Combinaison.Count || resh.CurrentShape != Combinaison[nbOfValid]){ 
 				Destroy(collider.gameObject);
-				if(ResetOnError){
-					nbOfValid = 0;
-					foreach(CombinaisonValidationLight light in CombinaisonValidationLightList){
-						if(light.isOn)
-							light.ChangeLight();
-					}
-				}
 				particleSystem.Play();
 			} else {
 				CombinaisonValidationLightList[nbOfValid].ChangeLight();
