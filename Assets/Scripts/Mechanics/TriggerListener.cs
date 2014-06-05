@@ -6,6 +6,7 @@ namespace XRay.Mechanics {
 	public abstract class TriggerListener : MonoBehaviour {
 		
 		public List<TriggeringMechanism> Mechanics;
+		public int MinMechanisNeed;
 		public bool RevertedTrigger = false;
 		
 		private List<int> _nbOfValid;
@@ -13,6 +14,9 @@ namespace XRay.Mechanics {
 		protected virtual void Start() {
 			foreach (var mech in Mechanics) {
 				mech.OnTrigger += Trigger;
+			}
+			if(MinMechanisNeed == 0) {
+				MinMechanisNeed = Mechanics.Count;
 			}
 			_nbOfValid = new List<int>();
 			for (int i = 0; i < Mechanics.Count; i++) {
@@ -59,11 +63,9 @@ namespace XRay.Mechanics {
 				if(valid == 1) {
 					count++;
 				}
-				else {
-					return false;
-				}
 			}
-			if(count == Mechanics.Count) {
+
+			if(count >= MinMechanisNeed) {
 				return true;
 			}
 			else {
