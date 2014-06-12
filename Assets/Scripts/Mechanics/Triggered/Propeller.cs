@@ -27,17 +27,13 @@ namespace XRay.Mechanics.Triggered {
 			}
 		}
 		
-		protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
-		{		
-			switch(eventName) {
-			case TriggeringMechanism.EventNames.ENABLE:
+		protected override void TriggerAction (bool trigger)
+		{	
+			if(trigger) {
 				Enabled = true;
-				break;
-			case TriggeringMechanism.EventNames.DISABLE:
+			}
+			else {
 				Enabled = false;
-				break;
-			default:
-				break;
 			}
 		}
 	}

@@ -33,7 +33,7 @@ namespace XRay.Player {
         }
 
         public void FixedUpdate() {
-            if (!StaticVariables.IsOnTuto) {
+            if (!StaticVariables.CantMove) {
                 // Cache the horizontal input.
                 var h = Input.GetAxis("Horizontal");
 
@@ -69,17 +69,10 @@ namespace XRay.Player {
                     Cone.SetActive(true);
                 }
             }
-
-            if (!IsGrounded) return;
-            var elevator = GetParent(GetParent(IsGrounded.gameObject));
-            if (elevator != null && elevator.name == "Elevator") {
-                rigidbody2D.transform.position = new Vector2(IsGrounded.transform.parent.transform.position.x,
-                                                             rigidbody2D.transform.position.y);
-            }
         }
 
         public void Update() {
-            if (StaticVariables.IsOnTuto) return;
+			if (StaticVariables.CantMove) return;
 
             // The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
             IsGrounded = Physics2D.OverlapArea(

@@ -15,9 +15,9 @@ namespace XRay.Mechanics.Triggering {
 		void Update () {
 			if (beamState != lastBeamState) {
 				if (beamState) {
-					Trigger(BeamEnterEvent);
+					Trigger(BeamEnterEvent, name);
 				} else {
-					Trigger(BeamExitEvent);
+					Trigger(BeamExitEvent, name);
 				}
 			}
 			lastBeamState = beamState;

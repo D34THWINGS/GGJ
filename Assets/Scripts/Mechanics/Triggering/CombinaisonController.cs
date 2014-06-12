@@ -6,11 +6,16 @@ using XRay.Objects;
 namespace XRay.Mechanics.Triggering {
 
 	public class CombinaisonController : TriggeringMechanism {
-		
+
+		public GameObject ValidationLightContainer;
+		public GameObject ValidationLight;
+
+		public bool useSpawn = true;
 		public Transform Spawn;
 		public GameObject SpawnedObject;
 		public float SpawnInterval = 5000f;
 		public List<int> Combinaison;
+		public bool ResetOnError = false;
 		public bool Enabled {
 			get {
 				return enabled;
@@ -23,17 +28,29 @@ namespace XRay.Mechanics.Triggering {
 				enabled = value;
 			}
 		}
-		
+
+		private List<CombinaisonValidationLight> CombinaisonValidationLightList;
 		private int nbOfValid = 0;
 		private Timer timer;
 		private bool pop = false;
-		
+
+		void Awake(){
+			CombinaisonValidationLightList = new List<CombinaisonValidationLight>();
+		}
+
 		void Start() {
-			if (Spawn == null)
-				throw new UnityException("This component needs the spawn to be setted");
-			if (SpawnedObject == null)
-				throw new UnityException("This component needs the spawned object to be setted");
-			
+			for(int i=0; i<Combinaison.Count;i++){
+				GameObject go = (GameObject)GameObject.Instantiate(ValidationLight);
+				go.transform.parent = ValidationLightContainer.transform;
+				go.transform.localPosition = new Vector3(0+i*2,0,0);
+				CombinaisonValidationLightList.Add(go.GetComponent<CombinaisonValidationLight>());
+			}
+			if(useSpawn){
+				if (Spawn == null)
+					throw new UnityException("This component needs the spawn to be setted");
+				if (SpawnedObject == null)
+					throw new UnityException("This component needs the spawned object to be setted");
+			}
 			timer = new Timer(SpawnInterval);
 			timer.Elapsed += (sender, e) => {
 				pop = true;
@@ -44,7 +61,7 @@ namespace XRay.Mechanics.Triggering {
 		
 		void Update() {
 			// Spawn a random shape
-			if (pop) {
+			if (pop && useSpawn) {
 				GameObject spawned = (GameObject) Instantiate(SpawnedObject);
 				spawned.name = "Digit" + nbOfValid + 1;
 				spawned.transform.position = Spawn.position;
@@ -62,11 +79,23 @@ namespace XRay.Mechanics.Triggering {
 			if (resh == null) return;
 			
 			if (nbOfValid == Combinaison.Count || resh.CurrentShape != Combinaison[nbOfValid]){ 
-				Destroy(collider.gameObject);
+				//Destroy(collider.gameObject);
+				if(ResetOnError){
+					nbOfValid = 0;
+					foreach(CombinaisonValidationLight light in CombinaisonValidationLightList){
+						if(light.isOn)
+							light.ChangeLight();
+					}
+					gameObject.GetComponent<ResetTriggered>().Reset();
+				}else{
+					Destroy(collider.gameObject);
+				}
 				particleSystem.Play();
 			} else {
+				CombinaisonValidationLightList[nbOfValid].ChangeLight();
 				nbOfValid++;
-				Destroy(collider.gameObject.GetComponent<InteractibleObject>());
+				if(!ResetOnError)
+					Destroy(collider.gameObject.GetComponent<InteractibleObject>());
 			}
 			
 			if (nbOfValid == Combinaison.Count) {

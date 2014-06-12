@@ -6,20 +6,16 @@ namespace XRay.Mechanics.Triggered {
 	public class Door : TriggerListener {
 		
 		public GameObject DoorBody;
+		public Transform Origin;
 		public Transform Target;
 		public float Speed = 2f;
 		public bool IsOpened = false;
 		public bool keepOpened = false;
-		
-		[HideInInspector]
-		public GameObject Origin;
+
 		
 		// Use this for initialization
 		protected override void Start () {
 			base.Start();
-			Origin = new GameObject();
-			Origin.transform.position = DoorBody.transform.position;
-			Origin.transform.rotation = DoorBody.transform.rotation;
 		}
 		
 		// Update is called once per frame
@@ -33,18 +29,15 @@ namespace XRay.Mechanics.Triggered {
 			}
 		}
 		
-		protected override void TriggerAction (TriggeringMechanism.EventNames eventName)
+		protected override void TriggerAction (bool trigger)
 		{
-			switch(eventName) {
-			case TriggeringMechanism.EventNames.ENABLE:
+			if(trigger) {
 				IsOpened = true;
-				break;
-			case TriggeringMechanism.EventNames.DISABLE:
-				if(!keepOpened)
+			}
+			else {
+				if(!keepOpened){
 					IsOpened = false;
-				break;
-			default:
-				break;
+				}
 			}
 		}
 	}

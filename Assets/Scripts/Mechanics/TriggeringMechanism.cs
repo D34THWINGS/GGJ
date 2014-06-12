@@ -11,12 +11,12 @@ namespace XRay.Mechanics {
 			DISABLE
 		};
 		
-		public delegate void TriggerDelegate(EventNames eventName);
+		public delegate void TriggerDelegate(EventNames eventName, string name = "");
 		public TriggerDelegate OnTrigger;
 		
-		protected void Trigger (EventNames eventName) {
+		protected void Trigger (EventNames eventName, string name = "") {
 			if (OnTrigger != null) {
-				OnTrigger(eventName);
+				OnTrigger(eventName,name);
 			}
 		}
 	}
