@@ -58,7 +58,12 @@ namespace XRay.Objects {
 		// Use this for initialization
 		void Start () {
 			GetComponent<Animator>().SetBool("Hidden", false);
-			gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+		    var boxCollider = gameObject.GetComponent<BoxCollider2D>();
+			if (boxCollider != null)
+                boxCollider.isTrigger = false;
+            var circleCollider = gameObject.GetComponent<CircleCollider2D>();
+            if (circleCollider != null)
+                circleCollider.isTrigger = false;
 			targetScale = transform.localScale;
 			originMaterial = collider2D.sharedMaterial;
 			

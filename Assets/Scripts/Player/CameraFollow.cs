@@ -2,15 +2,17 @@
 
 namespace XRay.Player {
     public class CameraFollow : MonoBehaviour {
+        public Transform Target;
         public float XMargin = 4f; // Distance in the x axis the player can move before the camera follows.
         public float YMargin = 2f; // Distance in the y axis the player can move before the camera follows.
-        public float XSmooth = 2f; // How smoothly the camera catches up with it's target movement in the x axis.
-        public float YSmooth = 2f; // How smoothly the camera catches up with it's target movement in the y axis.
+        public float XSmooth = 8f; // How smoothly the camera catches up with it's target movement in the x axis.
+        public float YSmooth = 8f; // How smoothly the camera catches up with it's target movement in the y axis.
         public Vector2 MaxXAndY; // The maximum x and y coordinates the camera can have.
         public Vector2 MinXAndY; // The minimum x and y coordinates the camera can have.
 
 
         private Transform _player; // Reference to the player's transform.
+        private Vector3 _velocity;
 
 
         public void Awake() {
@@ -32,9 +34,17 @@ namespace XRay.Player {
 
 
         public void FixedUpdate() {
-            TrackPlayer();
+            //TrackPlayer();
         }
 
+        private void Update() {
+            if (!Target || (!CheckXMargin() && !CheckYMargin())) return;
+            var point = camera.WorldToViewportPoint(Target.position);
+            var delta = Target.position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
+                //(new Vector3(0.5, 0.5, point.z));
+            var destination = transform.position + delta;
+            transform.position = Vector3.SmoothDamp(transform.position, destination, ref _velocity, 0.15f);
+        }
 
         private void TrackPlayer() {
             // By default the target x and y coordinates of the camera are it's current x and y coordinates.

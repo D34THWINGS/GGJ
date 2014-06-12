@@ -23,6 +23,8 @@ namespace XRay.Editor {
         public GameObject MainCamera;
         public GameObject Player;
         public TranformInterface TUI;
+        public Texture Crosshair;
+        public Texture Axis;
 
         private XRayObjects _selectedObjectType = XRayObjects.Ground;
         private GameObject _objectHolder;
@@ -34,10 +36,10 @@ namespace XRay.Editor {
         private Transform _grabOrigin;
         private Camera _cursorCamera;
         private bool _testMode = false;
-        private GameObject _crosshair;
         private bool _looper;
         private GUIText _pressLB;
         private GameObject _spawn;
+        private bool _drawCrosshair = true;
 
         private delegate void LoopDelegate();
 
@@ -70,16 +72,16 @@ namespace XRay.Editor {
             _objectHolder = GameObject.Find("ObjectHolder");
             _levelHolder = GameObject.Find("LevelHolder");
             _cursorCamera = GameObject.Find("CursorCamera").GetComponent<Camera>();
-            _crosshair = GameObject.Find("Crosshair");
             _pressLB = GameObject.Find("PressLB").GetComponent<GUIText>();
             _spawn = GameObject.Find("PlayerSpawnPoint");
 
             // Disable player and it's camera
             MainCamera.SetActive(false);
             Player.SetActive(false);
+            EnablePhysics(_levelHolder, false);
 
             // Load prefabs
-            var interactiveObject = Resources.Load("Prefabs/InteractibleBlock", typeof (GameObject)) as GameObject;
+            var interactiveObject = Resources.Load("EditorPrefabs/InteractibleBlock", typeof (GameObject)) as GameObject;
 
             // Interface creation
             _btnTree = new TransformButton("Root") {
@@ -213,7 +215,7 @@ namespace XRay.Editor {
                         StartCoroutine(LoopWithWait(() => {
                             var val = XRayInput.GetRightStick();
                             ScaleCurrentObject(val.x*0.5f, -val.y*0.5f);
-                        }, 50));
+                        }, 50f));
                     }
                     if (Input.GetKeyUp(KeyCode.JoystickButton4)) {
                         _looper = false;
@@ -227,11 +229,12 @@ namespace XRay.Editor {
                 // Rotate object
                 if (_currentTool == EditorFunctions.Rotate) {
                     if (Input.GetKeyDown(KeyCode.JoystickButton4)) {
-                        CurrentObject.transform.rotation = Quaternion.Euler(RoundToClosestHalf(CurrentObject.transform.rotation.eulerAngles, 22.5f));
+                        CurrentObject.transform.rotation =
+                            Quaternion.Euler(RoundToClosestHalf(CurrentObject.transform.rotation.eulerAngles, 22.5f));
                         StartCoroutine(LoopWithWait(() => {
                             var val = XRayInput.GetRightStick();
                             RotateCurrentObject(val.x*22.5f);
-                        }, 100));
+                        }, 100f));
                     }
                     if (Input.GetKeyUp(KeyCode.JoystickButton4)) {
                         _looper = false;
@@ -252,10 +255,22 @@ namespace XRay.Editor {
             }
 
             // Cursor position
-            var h = Input.GetAxis("Horizontal");
-            var v = Input.GetAxis("Vertical");
-            var move = new Vector3(h*Speed, v*Speed, 0);
-            transform.position += move;
+            if (Input.GetKeyDown(KeyCode.JoystickButton4)) {
+                transform.position = RoundToClosestHalf(transform.position, 0.25f);
+                StartCoroutine(LoopWithWait(() => {
+                    Vector3 val = XRayInput.GetLeftStick()*0.25f;
+                    transform.position += val;
+                }, 50f));
+            }
+            if (Input.GetKeyUp(KeyCode.JoystickButton4)) {
+                _looper = false;
+            }
+            if (!Input.GetKey(KeyCode.JoystickButton4)) {
+                var h = Input.GetAxis("Horizontal");
+                var v = Input.GetAxis("Vertical");
+                var move = new Vector3(h*Speed, v*Speed);
+                transform.position += move;
+            }
 
             // Buttons activation
             _btnTree["Scale"].Active = HasCurrentObject;
@@ -283,6 +298,15 @@ namespace XRay.Editor {
 
         public void OnGUI() {
             _btnTree.DrawButtonTree(_btnTree.Position);
+            if (_drawCrosshair)
+                GUI.DrawTexture(
+                    new Rect(Screen.width/2 - Crosshair.width/2, Screen.height/2 - Crosshair.height/2, Crosshair.width,
+                             Crosshair.height), Crosshair);
+            if (!HasCurrentObject || !_drawCrosshair) return;
+            GUIUtility.RotateAroundPivot(10.0f, new Vector2(240.0f, 160.0f));
+            GUI.DrawTexture(
+                new Rect(Screen.width/2 - Axis.width/2, Screen.height/2 - Axis.height/2, Axis.width, Axis.height),
+                Axis);
         }
 
         /// <summary>
@@ -330,12 +354,15 @@ namespace XRay.Editor {
         /// <param name="grabbed">The object to grab.</param>
         public void GrabObject(GameObject grabbed) {
             if (HasCurrentObject) return;
+            grabbed = GetRootObject(grabbed);
             transform.position = grabbed.transform.position;
             grabbed.transform.parent = _objectHolder.transform;
             _grabOrigin =
                 Instantiate(gameObject.transform, grabbed.transform.position, grabbed.transform.rotation)
                 as Transform;
-            if (_grabOrigin != null) _grabOrigin.gameObject.SetActive(false);
+            if (_grabOrigin == null) return;
+            _grabOrigin.localScale = grabbed.transform.localScale;
+            _grabOrigin.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -346,7 +373,7 @@ namespace XRay.Editor {
         public void ScaleCurrentObject(float x, float y) {
             if (!HasCurrentObject) return;
             float newX = CurrentObject.transform.localScale.x + x, newY = CurrentObject.transform.localScale.y + y;
-            if (newX > 0.5f && newY > 0.5f) {
+            if (newX >= 1f && newY >= 1f) {
                 CurrentObject.transform.localScale = new Vector3(newX, newY, 1f);
             }
         }
@@ -398,14 +425,17 @@ namespace XRay.Editor {
         /// </summary>
         private void StartTestMode() {
             enabled = false;
-            _crosshair.SetActive(false);
+            _drawCrosshair = false;
             MainCamera.SetActive(true);
             Player.SetActive(true);
             Player.transform.position = _spawn.transform.position;
             _spawn.SetActive(false);
             TUI.enabled = true;
             var cpy = Instantiate(_levelHolder) as GameObject;
-            if (cpy != null) cpy.name = "LevelCopy";
+            if (cpy != null) {
+                cpy.name = "LevelCopy";
+                EnablePhysics(cpy, true);
+            }
             _levelHolder.SetActive(false);
             GameObject.Find("PressStart").GetComponent<GUIText>().text = "Press start to end the test";
             StartCoroutine(EndTestMode());
@@ -422,7 +452,7 @@ namespace XRay.Editor {
 
             Destroy(GameObject.Find("LevelCopy"));
             _levelHolder.SetActive(true);
-            _crosshair.SetActive(true);
+            _drawCrosshair = true;
             Player.SetActive(false);
             MainCamera.SetActive(false);
             _spawn.SetActive(true);
@@ -443,6 +473,29 @@ namespace XRay.Editor {
                 callback();
                 yield return new WaitForSeconds(waitTime/1000);
             }
+        }
+
+        /// <summary>
+        /// Enables or Disables all the colliders contained in the given gameObject.
+        /// </summary>
+        /// <param name="parent">The parent object.</param>
+        /// <param name="enable">Enable or disable.</param>
+        private static void EnablePhysics(GameObject parent, bool enable) {
+            if (parent.collider2D != null) {
+                parent.collider2D.isTrigger = !enable;
+            }
+            for (var i = 0; i < parent.transform.childCount; i++) {
+                EnablePhysics(parent.transform.GetChild(i).gameObject, enable);
+            }
+        }
+
+        /// <summary>
+        /// Returns the object marked as root containing the given object. 
+        /// </summary>
+        /// <param name="child">Child object.</param>
+        /// <returns>Root object.</returns>
+        private static GameObject GetRootObject(GameObject child) {
+            return child.tag == "Root" ? child : GetRootObject(child.transform.parent.gameObject);
         }
     }
 }
