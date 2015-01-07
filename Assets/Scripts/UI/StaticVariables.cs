@@ -10,7 +10,9 @@ namespace XRay.UI {
             ChangeMaterial
         }
 
-        private static readonly List<Powers> EnabledPowers = new List<Powers>() {};
+        private static readonly List<Powers> EnabledPowers = new List<Powers>() {
+			Powers.Vision
+		};
 
         public static float LightWeight = 1.2f;
         public static float HeavyWeight = 3f;
